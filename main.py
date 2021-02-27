@@ -1,6 +1,7 @@
 #Trabalho de APA
 from collections import defaultdict
 import graph
+import matrix
 
 import pygame
 def window():
@@ -57,28 +58,18 @@ def main():
             graph[connection[2]].append(connection[0])
         else:
             graph[connection[2]] = [connection[0]]
-
-    g = buildGraph(graph)
-    g.printGraph()
-    print(listGraph)
-    print(graph)
-    window()
-
-        
-        if(graph.get(connection[2])):
-            graph[connection[2]].append(connection[0])
-        else:
-            graph[connection[2]] = [connection[0]]
         
         if int(connection[0]) > sizeMatrix:
             sizeMatrix = int(connection[0])
         elif int(connection[2]) > sizeMatrix:
             sizeMatrix = int(connection[2]) 
 
-    matrix = Matrix(graph, sizeMatrix)
-
+        matrix = Matrix(graph, sizeMatrix)
+    g = buildGraph(graph)
+    g.printGraph()
     print(listGraph)
     print(graph)
+    window()
 
 
 main()
