@@ -1,5 +1,4 @@
 #Trabalho de APA
-<<<<<<< HEAD
 from collections import defaultdict
 import graph
 
@@ -37,7 +36,7 @@ def main():
     listGraph = input().split(";")
 
     graph = {}
-=======
+
 from matrix import Matrix
 
 def main():
@@ -45,7 +44,7 @@ def main():
 
     graph = {}
     sizeMatrix = 0
->>>>>>> origin/main
+
 
     for connection in listGraph:
         
@@ -53,7 +52,7 @@ def main():
             graph[connection[0]].append(connection[2])
         else:
             graph[connection[0]] = [connection[2]]
-<<<<<<< HEAD
+
         if (graph.get(connection[2])):
             graph[connection[2]].append(connection[0])
         else:
@@ -64,7 +63,7 @@ def main():
     print(listGraph)
     print(graph)
     window()
-=======
+
         
         if(graph.get(connection[2])):
             graph[connection[2]].append(connection[0])
@@ -81,5 +80,5 @@ def main():
     print(listGraph)
     print(graph)
 
->>>>>>> origin/main
+
 main()
