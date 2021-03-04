@@ -27,6 +27,7 @@ class Vertex:
     def getPos(self):
         return [self.x, self.y]
 
+
 class Edge:
 
     def __init__(self, vertexA, vertexB, weight):
@@ -36,8 +37,9 @@ class Edge:
     def setWeight(self, w):
         self.weight = w
 
-    def getVertex(self):
+    def getEdge(self):
         return self.edge
+
 
 
 class Graph:
@@ -45,6 +47,9 @@ class Graph:
     def __init__(self, listOfVertex, listOfEdges):
         self.listOfEdges = listOfEdges
         self.listOfVertex = listOfVertex
+        self.size = 0
+        
+        self.countSize(listOfVertex)
 
     def setVertex(self, key, weight):
         v = Vertex(key, weight)
@@ -55,10 +60,27 @@ class Graph:
 
     def getEdges(self):
         return self.listOfEdges
+    
+    def countSize(self, listV):
+
+        size = len(listV)
+        for i in listV:
+            if i == 0:
+                size -= 1
+    
+        self.size = size
+
+    def getSize(self):
+        return self.size
+
     def printGraph(self):
         print("Vertices")
         for v in self.listOfVertex:
-            print(v.vertex)
+            try:
+                print(v.vertex)
+            except AttributeError:
+                print("Casa vazia")
+
         print("Edges")
         for e in self.listOfEdges:
             print(e.edge, e.weight)

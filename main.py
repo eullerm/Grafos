@@ -14,8 +14,6 @@ TOP = 80
 
 def window(view, graph, matrix):
 
-
-
     pygame.font.init()
     fontSize = 50
     font = pygame.font.SysFont('arial', fontSize)
@@ -78,18 +76,12 @@ def window(view, graph, matrix):
 
         elif(view == 2 or view == 3):
 
-
             windowWidth = (WIDTH + MARGIN) * matrix.getSize() + MARGIN
 
             if(windowWidth > 550):
                 WINDOW_SIZE = (windowWidth , (HEIGHT + MARGIN) * matrix.getSize() + MARGIN + TOP)
             else:
                 WINDOW_SIZE = (550 , (HEIGHT + MARGIN) * matrix.getSize() + MARGIN + TOP)
-
-            
-
-        
-
         
             for row in range(matrix.getSize()):
                 for column in range(matrix.getSize()):
@@ -108,16 +100,20 @@ def window(view, graph, matrix):
                     
         pygame.display.flip()     
 
+
 def drawGraph(graph, screen):
 
-
+    pygame.font.init()
+    fontSize = 50
+    font = pygame.font.SysFont('arial', fontSize)
 
     centerX = screen.get_width() /2
     centerY = screen.get_height() / 2
     radius = 200
     vertexList = graph.getVertex()
+    edgeList = graph.getEdges()
     angle = radians(0)
-    rotate = radians(360 / len(vertexList))
+    rotate = radians(360 / graph.getSize())
 
     x = centerX - radius * cos(angle)
     y = centerY - radius * sin(angle)
@@ -130,30 +126,49 @@ def drawGraph(graph, screen):
     sprites = []
     
     for s in vertexList:
-        s.setPos(x - s.sprite.get_width()/2, y - s.sprite.get_height()/2)#Da um set para a posição do sprite
-        
-        screen.blit(s.sprite, (s.getPos()))
-        
-        angle += rotate
-        x = centerX - radius * cos(angle)
-        y = centerY - radius * sin(angle)
-        
-        
+        if(s != 0):
+            s.setPos(x - s.sprite.get_width()/2, y - s.sprite.get_height()/2)#Da um set para a posição do sprite
+    
+            angle += rotate
+            x = centerX - radius * cos(angle)
+            y = centerY - radius * sin(angle)
+    
+    for e in edgeList:
+
+        vertexA = int(e.getEdge()[0])
+        vertexB = int(e.getEdge()[1])
+
+        if(vertexA != vertexB):
+            try:
+                vertexAx = vertexList[vertexA - 1].getPos()[0] + 25
+                vertexAy = vertexList[vertexA - 1].getPos()[1] + 25
+                vertexBx = vertexList[vertexB - 1].getPos()[0] + 25
+                vertexBy = vertexList[vertexB - 1].getPos()[1] + 25
+
+                pygame.draw.line(screen, BLACK, (vertexAx, vertexAy), (vertexBx, vertexBy), 1)
+            except IndexError:
+                print(vertexA, vertexB)
+    
+    for s in vertexList:
+
+        if(s != 0):
+            screen.blit(s.sprite, s.getPos())
+            text = font.render(str(s.vertex), True, NUMBER_COLOR)
+
+            screen.blit(text, (s.getPos()[0] + 10, s.getPos()[1]))
         
 
-def buildGraph(data):
-    vertexList = []
+        
+
+def buildGraph(data, size):
+    vertexList = [0] * size
     edgeList = []
     for i in data:
-        positions = []
-        for j in vertexList:
-            positions.append(j.getPos())
-
-        v = graph.Vertex(i, 1,  0, 0, False)
+        v = graph.Vertex(i, 1, 0, 0, False)
         for j in data[i]:
             e = graph.Edge(i, j, 1)
             edgeList.append(e)
-        vertexList.append(v)
+        vertexList[int(i) - 1] = v
 
     g = graph.Graph(vertexList, edgeList)
     return g
@@ -199,7 +214,7 @@ def main():
     print(graph)
 
 
-    g = buildGraph(graph)
+    g = buildGraph(graph, matrixSize)
     g.printGraph()
     print(listGraph)
     print(graph)
