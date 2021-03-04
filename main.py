@@ -19,12 +19,12 @@ def window(view, object):
 
     font2 = pygame.font.SysFont('arial', int(fontSize/5)+5)
 
-    BUTTON1 = font2.render("Grafo", True, BLACK)
-    BUTTON2 = font2.render("Matriz de adjacência", True, BLACK)
-    BUTTON3 = font2.render("Matriz de incidência", True, BLACK)
+    BUTTON1 = font2.render("Grafo", True, WHITE)
+    BUTTON2 = font2.render("Matriz de adjacência", True, WHITE)
+    BUTTON3 = font2.render("Matriz de incidência", True, WHITE)
 
  
-    background_color = BLACK
+    background_color = WHITE
     
     pygame.display.set_caption('Trabalho de APA')
     
@@ -33,7 +33,7 @@ def window(view, object):
     MARGIN = 10
 
     if(view == 1):
-        WINDOW_SIZE = (1280, 900)
+        WINDOW_SIZE = (1280, 800)
 
     elif(view == 2 or view == 3):
 
@@ -53,13 +53,13 @@ def window(view, object):
     
     while running:
 
-        pygame.draw.rect(screen, WHITE, [MARGIN, MARGIN/2, 2 * WIDTH + MARGIN, TOP] )
+        pygame.draw.rect(screen, BLACK, [MARGIN, MARGIN/2, 2 * WIDTH + MARGIN, TOP] )
         screen.blit(BUTTON1, (WIDTH/2 + 3 * MARGIN, TOP/2))
         
-        pygame.draw.rect(screen, WHITE, [2 * WIDTH + 3 * MARGIN, MARGIN/2, 2 * WIDTH + MARGIN, TOP] )
+        pygame.draw.rect(screen, BLACK, [2 * WIDTH + 3 * MARGIN, MARGIN/2, 2 * WIDTH + MARGIN, TOP] )
         screen.blit(BUTTON2, (2 * WIDTH + 5 * MARGIN, TOP/2))
         
-        pygame.draw.rect(screen, WHITE, [4 * WIDTH + 5 * MARGIN, MARGIN/2, 2 * WIDTH + MARGIN, TOP] )
+        pygame.draw.rect(screen, BLACK, [4 * WIDTH + 5 * MARGIN, MARGIN/2, 2 * WIDTH + MARGIN, TOP] )
         screen.blit(BUTTON3, (4 * WIDTH + 7 * MARGIN, TOP/2))
 
         for event in pygame.event.get():
