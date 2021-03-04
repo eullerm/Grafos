@@ -1,15 +1,13 @@
 #Trabalho de APA
-from collections import defaultdict
 import graph
 from matrix import Matrix
 import pygame, sys
+import math
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 TOP = 80
-
-
 
 def window(view, object):
 
@@ -25,16 +23,20 @@ def window(view, object):
     BUTTON2 = font2.render("Matriz de adjacência", True, BLACK)
     BUTTON3 = font2.render("Matriz de incidência", True, BLACK)
 
-    background_color = WHITE
-    WINDOW_SIZE = (1024, 576)
+ 
+    background_color = BLACK
     
     pygame.display.set_caption('Trabalho de APA')
     
-    if(view == 2 or view == 3):
-        background_color = BLACK
-        WIDTH = 80
-        HEIGHT = 80
-        MARGIN = 10
+    WIDTH = 80
+    HEIGHT = 80
+    MARGIN = 10
+
+    if(view == 1):
+        WINDOW_SIZE = (1280, 900)
+
+    elif(view == 2 or view == 3):
+
 
         windowWidth = (WIDTH + MARGIN) * object.getSize() + MARGIN
 
@@ -58,13 +60,16 @@ def window(view, object):
         screen.blit(BUTTON2, (2 * WIDTH + 5 * MARGIN, TOP/2))
         
         pygame.draw.rect(screen, WHITE, [4 * WIDTH + 5 * MARGIN, MARGIN/2, 2 * WIDTH + MARGIN, TOP] )
-        screen.blit(BUTTON2, (4 * WIDTH + 7 * MARGIN, TOP/2))
+        screen.blit(BUTTON3, (4 * WIDTH + 7 * MARGIN, TOP/2))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
-        if(view == 2 or view == 3):
+        if(view == 1):
+            drawGraph(object, screen)
+
+        elif(view == 2 or view == 3):
             for row in range(object.getSize()):
                 for column in range(object.getSize()):
                     pygame.draw.rect(screen,
@@ -82,16 +87,44 @@ def window(view, object):
                     
         pygame.display.flip()     
 
+def drawGraph(graph, screen):
+    vertexList = graph.getVertex()
+    allSpritesList = pygame.sprite.Group()
+    Rects = pygame.sprite.Group()
+    sprites = []
+    for s in vertexList:
+        screen.blit(s.sprite, (s.x, s.y + TOP))
 
 def buildGraph(data):
     vertexList = []
     edgeList = []
     for i in data:
-        v = graph.Vertex(i, 1)
+        positions = []
+        for j in vertexList:
+            positions.append(j.getPos())
+        p = [10, 10]
+        for j in range(len(positions)):
+            x = 70
+            y = 70
+            a = 0
+            b = 0
+            if p in positions:
+                if j % 2 == 0:
+                    a+=1
+                    if (a > math.sqrt(len(data))):
+                        x+=70
+                else:
+                    b+=1
+                    if (b > math.sqrt(len(data))):
+                        y+=70
+
+            p = [p[0] + x, p[1] + y]
+
+
+        v = graph.Vertex(i, 1,  p[0], p[1], False)
         for j in data[i]:
             e = graph.Edge(i, j, 1)
             edgeList.append(e)
-
         vertexList.append(v)
 
     g = graph.Graph(vertexList, edgeList)
@@ -103,7 +136,7 @@ def main():
     # 1 - Visualiza o grafo
     # 2 - Para visualizar a matrizes de adjacencia
     # 3 - Para visualizar a matriz de incidencia
-    view = 2
+    view = 1
 
     print("insira o grafo:")
 
@@ -142,6 +175,6 @@ def main():
     g.printGraph()
     print(listGraph)
     print(graph)
-    window(view, matrix)
+    window(view, g)
 
 main()
