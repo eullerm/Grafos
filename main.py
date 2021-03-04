@@ -3,13 +3,16 @@ import graph
 from matrix import Matrix
 import pygame, sys
 import math
+from math import cos, pi, radians, sin
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+NUMBER_COLOR = (0, 0, 255)
+SQUARE_COLOR = (80, 80, 0)
 
 TOP = 80
 
-def window(view, object):
+def window(view, graph, matrix):
 
 
 
@@ -28,58 +31,76 @@ def window(view, object):
     
     pygame.display.set_caption('Trabalho de APA')
     
+    WINDOW_SIZE = (1280, 800)
+
+
     WIDTH = 80
     HEIGHT = 80
     MARGIN = 10
-
-    if(view == 1):
-        WINDOW_SIZE = (1280, 800)
-
-    elif(view == 2 or view == 3):
-
-
-        windowWidth = (WIDTH + MARGIN) * object.getSize() + MARGIN
-
-        if(windowWidth > 550):
-            WINDOW_SIZE = (windowWidth , (HEIGHT + MARGIN) * object.getSize() + MARGIN + TOP)
-        else:
-            WINDOW_SIZE = (550 , (HEIGHT + MARGIN) * object.getSize() + MARGIN + TOP)
-
-    screen = pygame.display.set_mode(WINDOW_SIZE)
-    screen.fill(background_color)
     
     
     running = True
     
     while running:
 
-        pygame.draw.rect(screen, BLACK, [MARGIN, MARGIN/2, 2 * WIDTH + MARGIN, TOP] )
+        screen = pygame.display.set_mode(WINDOW_SIZE)
+        screen.fill(background_color)
+
+        SQUARE1 = pygame.Rect(MARGIN, MARGIN/2, 2 * WIDTH + MARGIN, TOP)
+        pygame.draw.rect(screen, BLACK, SQUARE1 )
         screen.blit(BUTTON1, (WIDTH/2 + 3 * MARGIN, TOP/2))
         
-        pygame.draw.rect(screen, BLACK, [2 * WIDTH + 3 * MARGIN, MARGIN/2, 2 * WIDTH + MARGIN, TOP] )
+        SQUARE2 = pygame.Rect(2 * WIDTH + 3 * MARGIN, MARGIN/2, 2 * WIDTH + MARGIN, TOP) 
+        pygame.draw.rect(screen, BLACK, SQUARE2)
         screen.blit(BUTTON2, (2 * WIDTH + 5 * MARGIN, TOP/2))
         
-        pygame.draw.rect(screen, BLACK, [4 * WIDTH + 5 * MARGIN, MARGIN/2, 2 * WIDTH + MARGIN, TOP] )
+        SQUARE3 = pygame.Rect(4 * WIDTH + 5 * MARGIN, MARGIN/2, 2 * WIDTH + MARGIN, TOP) 
+        pygame.draw.rect(screen, BLACK, SQUARE3)
         screen.blit(BUTTON3, (4 * WIDTH + 7 * MARGIN, TOP/2))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                print(event.pos)
+                if SQUARE1.collidepoint(event.pos):
+                    view = 1
+                elif SQUARE2.collidepoint(event.pos):
+                    view = 2
+                elif SQUARE3.collidepoint(event.pos):
+                    view = 3
+
         if(view == 1):
-            drawGraph(object, screen)
+            WINDOW_SIZE = (1280, 800)
+            
+            drawGraph(graph, screen)
 
         elif(view == 2 or view == 3):
-            for row in range(object.getSize()):
-                for column in range(object.getSize()):
+
+
+            windowWidth = (WIDTH + MARGIN) * matrix.getSize() + MARGIN
+
+            if(windowWidth > 550):
+                WINDOW_SIZE = (windowWidth , (HEIGHT + MARGIN) * matrix.getSize() + MARGIN + TOP)
+            else:
+                WINDOW_SIZE = (550 , (HEIGHT + MARGIN) * matrix.getSize() + MARGIN + TOP)
+
+            
+
+        
+
+        
+            for row in range(matrix.getSize()):
+                for column in range(matrix.getSize()):
                     pygame.draw.rect(screen,
-                                    WHITE,
+                                    SQUARE_COLOR,
                                     [(MARGIN + WIDTH) * column + MARGIN,
                                     (MARGIN + HEIGHT) * row + MARGIN + TOP,
                                     WIDTH,
                                     HEIGHT])
 
-                    text = font.render(str(object.getValue(row, column, view-1)), True, BLACK)
+                    text = font.render(str(matrix.getValue(row, column, view-1)), True, NUMBER_COLOR)
 
                     screen.blit(text, ( (MARGIN + WIDTH) * column + MARGIN + fontSize/2,
                                     (MARGIN + HEIGHT) * row + TOP + fontSize/2,
@@ -88,12 +109,37 @@ def window(view, object):
         pygame.display.flip()     
 
 def drawGraph(graph, screen):
+
+
+
+    centerX = screen.get_width() /2
+    centerY = screen.get_height() / 2
+    radius = 200
     vertexList = graph.getVertex()
+    angle = radians(0)
+    rotate = radians(360 / len(vertexList))
+
+    x = centerX - radius * cos(angle)
+    y = centerY - radius * sin(angle)
+    
+    #Centro do circulo
+    pygame.draw.rect(screen, BLACK, [centerX, centerY, 10, 10])
+
     allSpritesList = pygame.sprite.Group()
     Rects = pygame.sprite.Group()
     sprites = []
+    
     for s in vertexList:
-        screen.blit(s.sprite, (s.x, s.y + TOP))
+        s.setPos(x - s.sprite.get_width()/2, y - s.sprite.get_height()/2)#Da um set para a posição do sprite
+        
+        screen.blit(s.sprite, (s.getPos()))
+        
+        angle += rotate
+        x = centerX - radius * cos(angle)
+        y = centerY - radius * sin(angle)
+        
+        
+        
 
 def buildGraph(data):
     vertexList = []
@@ -102,26 +148,8 @@ def buildGraph(data):
         positions = []
         for j in vertexList:
             positions.append(j.getPos())
-        p = [10, 10]
-        for j in range(len(positions)):
-            x = 70
-            y = 70
-            a = 0
-            b = 0
-            if p in positions:
-                if j % 2 == 0:
-                    a+=1
-                    if (a > math.sqrt(len(data))):
-                        x+=70
-                else:
-                    b+=1
-                    if (b > math.sqrt(len(data))):
-                        y+=70
 
-            p = [p[0] + x, p[1] + y]
-
-
-        v = graph.Vertex(i, 1,  p[0], p[1], False)
+        v = graph.Vertex(i, 1,  0, 0, False)
         for j in data[i]:
             e = graph.Edge(i, j, 1)
             edgeList.append(e)
@@ -175,6 +203,6 @@ def main():
     g.printGraph()
     print(listGraph)
     print(graph)
-    window(view, g)
+    window(view, g, matrix)
 
 main()

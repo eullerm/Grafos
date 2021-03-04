@@ -19,6 +19,11 @@ class Vertex:
 
     def setWeight(self, w):
         self.weight = w
+    
+    def setPos(self, x, y):
+        self.x = x
+        self.y = y
+    
     def getPos(self):
         return [self.x, self.y]
 
@@ -57,3 +62,5 @@ class Graph:
         print("Edges")
         for e in self.listOfEdges:
             print(e.edge, e.weight)
+
+    
