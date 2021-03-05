@@ -57,7 +57,6 @@ class Edge:
         return self.edge
 
 
-
 class Graph:
 
     def __init__(self, listOfVertex, listOfEdges):
