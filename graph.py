@@ -7,6 +7,8 @@ class Vertex:
         self.weight = weight
         self.sprite = pygame.image.load("templates/vertex.png")
         self.sprite = pygame.transform.scale(self.sprite, (50, 50))
+        self.rect = self.sprite.get_rect()#tem que pegar a coordenada do sprite e setar de acordo com a coordenada nova do vértice
+        self.rect.x, self.rect.y = x * 60, y * 60
         self.x = x
         self.y = y
         self.highlight = highlight
@@ -23,9 +25,23 @@ class Vertex:
     def setPos(self, x, y):
         self.x = x
         self.y = y
-    
+    def setHighlight(self, h):
+        self.highlight = h
+        if(h == True):
+            self.sprite = pygame.image.load("templates/vertexHighlighted.png")
+            self.sprite = pygame.transform.scale(self.sprite, (50, 50))
+            self.rect = self.sprite.get_rect()  # tem que pegar a coordenada do sprite e setar de acordo com a coordenada nova do vértice
+            self.rect.x, self.rect.y = self.x * 60, self.y * 60
+        else:
+            self.sprite = pygame.image.load("templates/vertex.png")
+            self.sprite = pygame.transform.scale(self.sprite, (50, 50))
+            self.rect = self.sprite.get_rect()  # tem que pegar a coordenada do sprite e setar de acordo com a coordenada nova do vértice
+            self.rect.x, self.rect.y = self.x * 60, self.y * 60
+
     def getPos(self):
         return [self.x, self.y]
+    def getRect(self):
+        return self.rect
 
 
 class Edge:

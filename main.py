@@ -68,6 +68,16 @@ def window(view, graph, matrix):
                     view = 2
                 elif SQUARE3.collidepoint(event.pos):
                     view = 3
+                    # Set the x, y postions of the mouse click
+                x, y = event.pos
+                for s in graph.getVertex():
+                    print(s.rect)
+                    if s.highlight == True:
+                        s.setHighlight(False)
+                    if s.rect.collidepoint(event.pos):
+                        s.setHighlight(True)
+                for s in graph.getVertex():
+                    print(s.vertex, s.highlight)
 
         if(view == 1):
             WINDOW_SIZE = (1280, 800)
@@ -117,22 +127,16 @@ def drawGraph(graph, screen):
 
     x = centerX - radius * cos(angle)
     y = centerY - radius * sin(angle)
-    
-    #Centro do circulo
-    pygame.draw.rect(screen, BLACK, [centerX, centerY, 10, 10])
 
-    allSpritesList = pygame.sprite.Group()
-    Rects = pygame.sprite.Group()
-    sprites = []
     
     for s in vertexList:
         if(s != 0):
             s.setPos(x - s.sprite.get_width()/2, y - s.sprite.get_height()/2)#Da um set para a posição do sprite
-    
+            s.rect.x, s.rect.y = s.x, s.y
             angle += rotate
             x = centerX - radius * cos(angle)
             y = centerY - radius * sin(angle)
-    
+
     for e in edgeList:
 
         vertexA = int(e.getEdge()[0])
