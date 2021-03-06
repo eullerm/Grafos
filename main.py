@@ -119,6 +119,7 @@ def drawGraph(graph, screen):
 
     pygame.font.init()
     fontSize = 30
+    RED = (255, 0, 0)
     font = pygame.font.SysFont('arial', fontSize)
     font2 = pygame.font.SysFont('arial', int(fontSize/2)+5)
 
@@ -173,7 +174,7 @@ def drawGraph(graph, screen):
                     textX = 2
                     textY = -60
                 screen.blit(e.sprite, (line.centerx + textX, line.centery + textY))
-                textWeight = font2.render(str(e.getWeight()), True, BLACK)     
+                textWeight = font2.render(str(e.getWeight()), True, RED)
                 screen.blit(textWeight, (line.centerx + textX, line.centery + textY))
                
             except IndexError:
@@ -182,15 +183,16 @@ def drawGraph(graph, screen):
     for s in vertexList:
 
         if(s != -1):
+            PURPLE = (127, 0, 255)
             screen.blit(s.sprite, s.getPos())
             text = font.render(str(s.vertex), True, NUMBER_COLOR)
-            textWeight = font2.render(str(s.getWeight()), True, NUMBER_COLOR)
+            textWeight = font2.render(str(s.getWeight()), True, PURPLE)
 
             textX = 0
             textY = 0
 
             screen.blit(text, (s.getPos()[0] + 15, s.getPos()[1] + 8))
-            screen.blit(textWeight, (s.rect.x, s.rect.y))
+            screen.blit(textWeight, (s.rect.x+18, s.rect.y-15))
             
         
 
