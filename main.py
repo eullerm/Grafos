@@ -16,9 +16,37 @@ WIDTH = 60
 HEIGHT = 60
 MARGIN = 10
 
+def keyInput(event, object, string):
+    for o in object:
+        if(o.getHighlight()):
+            if event.key == pygame.K_0:
+                string+='0'
+            if event.key == pygame.K_1:
+                string+='1'
+            if event.key == pygame.K_2:
+                string+='2'
+            if event.key == pygame.K_3:
+                string+='3'
+            if event.key == pygame.K_4:
+                string+='4'
+            if event.key == pygame.K_5:
+                string+='5'
+            if event.key == pygame.K_6:
+                string+='6'
+            if event.key == pygame.K_7:
+                string+='7'
+            if event.key == pygame.K_8:
+                string+='8'
+            if event.key == pygame.K_9:
+                string+='9'
+            if event.key == pygame.K_RETURN:
+                o.setWeight(string)
+    return string
+
 def window(view, graph, matrix):
 
     pygame.font.init()
+    string = ''
     
     fontSize = 15
     font2 = pygame.font.SysFont('arial', fontSize)
@@ -55,8 +83,14 @@ def window(view, graph, matrix):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+
+                string = keyInput(event, graph.getVertex(), string)
+                string = keyInput(event, graph.getEdges(), string)
+                print(string)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
+                string =''
                 print(event.pos)
                 if SQUARE1.collidepoint(event.pos):
                     view = 1
@@ -68,11 +102,17 @@ def window(view, graph, matrix):
                 x, y = event.pos
                 for s in graph.getVertex():
                     if(s != -1):
-                        print(s.rect)
                         if s.highlight == True:
                             s.setHighlight(False)
                         if s.rect.collidepoint(event.pos):
                             s.setHighlight(True)
+                for e in graph.getEdges():
+                    print(e.getPos())
+                    print(e.sprite.get_rect().x)
+                    if e.highlight == True:
+                        e.setHighlight(False)
+                    if e.rect.collidepoint(event.pos):
+                        e.setHighlight(True)
                 for s in graph.getVertex():
                     if(s != -1):
                         print(s.vertex, s.highlight)
@@ -92,8 +132,11 @@ def window(view, graph, matrix):
             #    WINDOW_SIZE = (550 , (HEIGHT + MARGIN) * matrix.getSize() + MARGIN + TOP)
 
             drawMatrix(matrix, screen, view-1)
-                    
+
+
         pygame.display.flip()     
+
+
 
 def drawMatrix(matrix, screen, flag):
     
@@ -139,7 +182,6 @@ def drawGraph(graph, screen):
         if(s != -1):
             #s.setPos(x - s.sprite.get_width()/2, y - s.sprite.get_height()/2)#Da um set para a posição do sprite
             s.setPos(x, y)
-            s.rect.x, s.rect.y = s.x, s.y
             angle += rotate
             x = centerX - radius * cos(angle)
             y = centerY - radius * sin(angle)
@@ -173,8 +215,9 @@ def drawGraph(graph, screen):
                 if( (vertexAy - vertexBy) == 0):
                     textX = 2
                     textY = -60
-                screen.blit(e.sprite, (line.centerx + textX, line.centery + textY))
-                textWeight = font2.render(str(e.getWeight()), True, RED)
+                e.setPos(line.centerx + textX, line.centery + textY)
+                screen.blit(e.sprite, e.getPos())
+                textWeight = font2.render(str(e.getWeight()), True, e.weightColor)
                 screen.blit(textWeight, (line.centerx + textX, line.centery + textY))
                
             except IndexError:

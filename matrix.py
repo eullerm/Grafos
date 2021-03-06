@@ -76,9 +76,9 @@ class Matrix:
             return self.incidenceMatrix[row][column]
 
     #Caso mude o peso da aresta
-    def changeWeigth(self, v1, v2, newWeigth):
-        self.adjacencyMatrix[v1][v2] = newWeigth
-        self.adjacencyMatrix[v2][v1] = newWeigth
+    def changeWeight(self, v1, v2, newWeight):
+        self.adjacencyMatrix[v1][v2] = newWeight
+        self.adjacencyMatrix[v2][v1] = newWeight
 
     def createGraph(self, listGraph):
 

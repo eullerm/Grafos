@@ -21,10 +21,10 @@ class Vertex:
 
     def setWeight(self, w):
         self.weight = w
-    
+
     def setPos(self, x, y):
-        self.x = x
-        self.y = y
+        self.rect.x = self.x = x
+        self.rect.y = self.y = y
 
     def setHighlight(self, h):
         self.highlight = h
@@ -44,16 +44,35 @@ class Vertex:
         
     def getRect(self):
         return self.rect
-
+    def getHighlight(self):
+        return self.highlight
 
 class Edge:
 
-    def __init__(self, vertexA, vertexB, weight):
+    def __init__(self, vertexA, vertexB, weight, highlight):
         self.edge = [vertexA, vertexB]
         self.weight = weight
         self.sprite = pygame.image.load("templates/weight.png")
         self.sprite = pygame.transform.scale(self.sprite, (20, 20))
+        self.highlight = highlight
+        self.rect = self.sprite.get_rect()#tem que pegar a coordenada do sprite e setar de acordo com a coordenada nova do vértice
+        self.rect.x, self.rect.y = 0, 0
+        self.x = 0
+        self.y = 0
+        self.weightColor = (0,0,0)
+    def setHighlight(self,h):
+        self.highlight = h
+        if h == True:
+            self.weightColor = (255,0,0)
+        else:
+            self.weightColor =(0,0,0)
 
+    def setPos(self, x, y):
+        self.rect.x = self.x = x
+        self.rect.y = self.y = y
+
+    def getPos(self):
+        return [self.x, self.y]
     def setWeight(self, w):
         self.weight = w
 
@@ -63,6 +82,8 @@ class Edge:
     def getEdge(self):
         return self.edge
 
+    def getHighlight(self):
+        return self.highlight
 
 class Graph:
 
@@ -117,7 +138,7 @@ class Graph:
             v = Vertex(i, 1, 0, 0, False)
             for j in data[i]:
                 if(not self.isSet(self.listOfEdges, [i, j])):   
-                    e = Edge(i, j, 1)
+                    e = Edge(i, j, 1, False)
                     self.listOfEdges.append(e)
             self.listOfVertex[int(i) - 1] = v
 
