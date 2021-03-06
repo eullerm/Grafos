@@ -25,6 +25,7 @@ class Vertex:
     def setPos(self, x, y):
         self.x = x
         self.y = y
+
     def setHighlight(self, h):
         self.highlight = h
         if(h == True):
@@ -40,6 +41,7 @@ class Vertex:
 
     def getPos(self):
         return [self.x, self.y]
+        
     def getRect(self):
         return self.rect
 
@@ -49,9 +51,14 @@ class Edge:
     def __init__(self, vertexA, vertexB, weight):
         self.edge = [vertexA, vertexB]
         self.weight = weight
+        self.sprite = pygame.image.load("templates/weight.png")
+        self.sprite = pygame.transform.scale(self.sprite, (20, 20))
 
     def setWeight(self, w):
         self.weight = w
+
+    def getWeight(self):
+        return self.weight
 
     def getEdge(self):
         return self.edge
@@ -59,12 +66,14 @@ class Edge:
 
 class Graph:
 
-    def __init__(self, listOfVertex, listOfEdges):
-        self.listOfEdges = listOfEdges
-        self.listOfVertex = listOfVertex
+    def __init__(self, data, size):
+        self.listOfEdges = []
+        self.listOfVertex = [-1] * size #O -1 é para poder desenhar vetores com vertices faltando
         self.size = 0
         
-        self.countSize(listOfVertex)
+        self.buildGraph(data)
+
+        self.countSize(self.listOfVertex)
 
     def setVertex(self, key, weight):
         v = Vertex(key, weight)
@@ -95,9 +104,33 @@ class Graph:
                 print(v.vertex)
             except AttributeError:
                 print("Casa vazia")
+        print("##############")
 
         print("Edges")
         for e in self.listOfEdges:
             print(e.edge, e.weight)
+        print("##############")
+
+    def buildGraph(self, data):
+         
+        for i in data:
+            v = Vertex(i, 1, 0, 0, False)
+            for j in data[i]:
+                if(not self.isSet(self.listOfEdges, [i, j])):   
+                    e = Edge(i, j, 1)
+                    self.listOfEdges.append(e)
+            self.listOfVertex[int(i) - 1] = v
+
+    def isSet(self, listOfEdges, edge):
+
+        for e in listOfEdges:
+            v1 = e.getEdge()[0]
+            v2 = e.getEdge()[1]
+
+            if( (v1 == edge[0] or v1 == edge[1]) and (v2 == edge[0] or v2 == edge[1])):
+                return True
+
+        return False
+
 
     
