@@ -1,46 +1,63 @@
 #Trabalho de APA
+
+####
+
+import os, sys
+dirpath = os.getcwd()
+sys.path.append(dirpath)
+if getattr(sys, "frozen", False):
+    os.chdir(sys._MEIPASS)
+
+#####
+
 from graph import Graph
 from matrix import Matrix
-import pygame, sys
+import pygame
 import math
 from math import cos, pi, radians, sin
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 NUMBER_COLOR = (0, 0, 255)
-
+RED = (180, 0, 0)
+GREEN = (0, 180, 0)
 SQUARE_COLOR = (80, 80, 0)
 
+WINDOW_SIZE = (1280, 800)
 TOP = 80
 WIDTH = 60
 HEIGHT = 60
 MARGIN = 10
 
-def keyInput(event, object, string):
+def keyInput(event, object, string, object2 = False):
     for o in object:
-        if(o.getHighlight()):
-            if event.key == pygame.K_0:
-                string+='0'
-            if event.key == pygame.K_1:
-                string+='1'
-            if event.key == pygame.K_2:
-                string+='2'
-            if event.key == pygame.K_3:
-                string+='3'
-            if event.key == pygame.K_4:
-                string+='4'
-            if event.key == pygame.K_5:
-                string+='5'
-            if event.key == pygame.K_6:
-                string+='6'
-            if event.key == pygame.K_7:
-                string+='7'
-            if event.key == pygame.K_8:
-                string+='8'
-            if event.key == pygame.K_9:
-                string+='9'
-            if event.key == pygame.K_RETURN:
-                o.setWeight(string)
+        if(o != -1):
+            if(o.getHighlight()):
+                if event.key == pygame.K_0:
+                    string += '0'
+                if event.key == pygame.K_1:
+                    string += '1'
+                if event.key == pygame.K_2:
+                    string += '2'
+                if event.key == pygame.K_3:
+                    string += '3'
+                if event.key == pygame.K_4:
+                    string += '4'
+                if event.key == pygame.K_5:
+                    string += '5'
+                if event.key == pygame.K_6:
+                    string += '6'
+                if event.key == pygame.K_7:
+                    string += '7'
+                if event.key == pygame.K_8:
+                    string += '8'
+                if event.key == pygame.K_9:
+                    string += '9'
+                if event.key == pygame.K_RETURN:
+                    string = int(string)
+                    o.setWeight(string)
+                    if(object2):
+                        object2.changeWeight(int(o.getEdge()[0]),int(o.getEdge()[1]), string)
     return string
 
 def window(view, graph, matrix):
@@ -54,19 +71,16 @@ def window(view, graph, matrix):
     BUTTON1 = font2.render("Grafo", True, WHITE)
     BUTTON2 = font2.render("Matriz de adjacência", True, WHITE)
     BUTTON3 = font2.render("Matriz de incidência", True, WHITE)
-
-    background_color = WHITE
+    BUTTON4 = font2.render("Voltar", True, WHITE)
     
     pygame.display.set_caption('Trabalho de APA')
-    
-    WINDOW_SIZE = (1280, 800)
     
     running = True
     
     while running:
 
         screen = pygame.display.set_mode(WINDOW_SIZE)
-        screen.fill(background_color)
+        screen.fill(WHITE)
 
         SQUARE1 = pygame.Rect(MARGIN, MARGIN/2, 3 * WIDTH + 2 * MARGIN, TOP)
         pygame.draw.rect(screen, BLACK, SQUARE1 )
@@ -80,13 +94,17 @@ def window(view, graph, matrix):
         pygame.draw.rect(screen, BLACK, SQUARE3)
         screen.blit(BUTTON3, (6 * WIDTH + 10 * MARGIN, TOP/2))
 
+        SQUARE4 = pygame.Rect(9 * WIDTH + 10 * MARGIN, MARGIN/2, 3 * WIDTH + 2 * MARGIN, TOP) 
+        pygame.draw.rect(screen, BLACK, SQUARE4)
+        screen.blit(BUTTON4, (9 * WIDTH + 13 * MARGIN, TOP/2))
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
 
                 string = keyInput(event, graph.getVertex(), string)
-                string = keyInput(event, graph.getEdges(), string)
+                string = keyInput(event, graph.getEdges(), string, matrix)
                 print(string)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -98,11 +116,11 @@ def window(view, graph, matrix):
                     view = 2
                 elif SQUARE3.collidepoint(event.pos):
                     view = 3
-                    # Set the x, y postions of the mouse click
-                x, y = event.pos
+                elif SQUARE4.collidepoint(event.pos):
+                    running = False
                 for s in graph.getVertex():
                     if(s != -1):
-                        if s.highlight == True:
+                        if s.getHighlight():
                             s.setHighlight(False)
                         if s.rect.collidepoint(event.pos):
                             s.setHighlight(True)
@@ -118,19 +136,9 @@ def window(view, graph, matrix):
                         print(s.vertex, s.highlight)
 
         if(view == 1):
-            #WINDOW_SIZE = (1280, 800)
-            
             drawGraph(graph, screen)
 
-        elif(view == 2 or view == 3):#Matriz de adjacencia
-
-            #windowWidth = (WIDTH + MARGIN) * matrix.getSize() + MARGIN
-                
-            #if(windowWidth > 550):
-            #    WINDOW_SIZE = (windowWidth , (HEIGHT + MARGIN) * matrix.getSize() + MARGIN + TOP)
-            #else:
-            #    WINDOW_SIZE = (550 , (HEIGHT + MARGIN) * matrix.getSize() + MARGIN + TOP)
-
+        elif(view == 2 or view == 3):#Matriz de adjacencia/incidencia
             drawMatrix(matrix, screen, view-1)
 
 
@@ -191,7 +199,7 @@ def drawGraph(graph, screen):
         vertexA = int(e.getEdge()[0])
         vertexB = int(e.getEdge()[1])
 
-        if(vertexA != vertexB):
+        if(vertexA != vertexB and vertexA and vertexB):
             try:
                 vertexAx = vertexList[vertexA - 1].getPos()[0] + 25
                 vertexAy = vertexList[vertexA - 1].getPos()[1] + 25
@@ -237,20 +245,8 @@ def drawGraph(graph, screen):
             screen.blit(text, (s.getPos()[0] + 15, s.getPos()[1] + 8))
             screen.blit(textWeight, (s.rect.x+18, s.rect.y-15))
             
-        
-
-
-def main():
-
-    # 1 - Visualiza o grafo
-    # 2 - Para visualizar a matrizes de adjacencia
-    # 3 - Para visualizar a matriz de incidencia
-    view = 1
-
-    print("insira o grafo:")
-
-    listGraph = input().split(";")
-
+def showGraph(inputGraph):
+    listGraph = inputGraph.split(";")
     matrix = Matrix(listGraph)
 
     print(listGraph)
@@ -259,6 +255,116 @@ def main():
 
     graph.printGraph()
     print(listGraph)
-    window(view, graph, matrix)
+    window(1, graph, matrix)
+
+def firstPage():
+
+    exit = False
+
+    pygame.font.init()
+    fontSize = 15
+    font = pygame.font.SysFont('arial', fontSize)
+
+    BUTTON1 = font.render("Criar grafo", True, WHITE)
+    BUTTON2 = font.render("Sair", True, WHITE)
+    TEXT = font.render("Digite aqui o grafo. Exemplo: 1-2;3-4", True, BLACK)
+
+
+    inputGraph = ''
+    pressed = False
+
+    while not exit:
+        screen = pygame.display.set_mode(WINDOW_SIZE)
+        screen.fill(WHITE)
+
+        INPUT = pygame.Rect(WINDOW_SIZE[0]/2 - 240, WINDOW_SIZE[1]/2 - 100, 500, TOP)
+        pygame.draw.rect(screen, BLACK, INPUT)
+        pygame.draw.rect(screen, WHITE, (WINDOW_SIZE[0]/2 - 235, WINDOW_SIZE[1]/2 - 95, 490, TOP - 10 ))
+        screen.blit(TEXT, (WINDOW_SIZE[0]/2 - 230, WINDOW_SIZE[1]/2 - 70))
+
+        SQUARE1 = pygame.Rect(WINDOW_SIZE[0]/2 - 100, WINDOW_SIZE[1]/2, 200, TOP)
+        pygame.draw.rect(screen, GREEN, SQUARE1 )
+        screen.blit(BUTTON1, (WINDOW_SIZE[0]/2 - 40, WINDOW_SIZE[1]/2 + 30))
+        
+        SQUARE2 = pygame.Rect(WINDOW_SIZE[0]/2 - 100, WINDOW_SIZE[1]/2 + 100, 200, TOP) 
+        pygame.draw.rect(screen, RED, SQUARE2)
+        screen.blit(BUTTON2, (WINDOW_SIZE[0]/2 - 20, WINDOW_SIZE[1]/2 + 130))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                if INPUT.collidepoint(event.pos):
+                    pressed = True
+                elif SQUARE1.collidepoint(event.pos):
+                    showGraph(inputGraph)
+
+                elif SQUARE2.collidepoint(event.pos):
+                    exit = True
+
+            if event.type == pygame.KEYDOWN:
+                    print(pressed)
+                    if pressed:
+                        print(pressed)
+                        if event.key == pygame.K_0:
+                            inputGraph += '0'
+                        if event.key == pygame.K_1:
+                            inputGraph += '1'
+                        if event.key == pygame.K_2:
+                            inputGraph += '2'
+                        if event.key == pygame.K_3:
+                            inputGraph += '3'
+                        if event.key == pygame.K_4:
+                            inputGraph += '4'
+                        if event.key == pygame.K_5:
+                            inputGraph += '5'
+                        if event.key == pygame.K_6:
+                            inputGraph += '6'
+                        if event.key == pygame.K_7:
+                            inputGraph += '7'
+                        if event.key == pygame.K_8:
+                            inputGraph += '8'
+                        if event.key == pygame.K_9:
+                            inputGraph += '9'
+                        if event.key == pygame.K_MINUS:
+                            inputGraph += '-'
+                        if event.key == pygame.K_SEMICOLON:
+                            inputGraph += ';'
+                        if event.key == pygame.K_BACKSPACE:
+                            inputGraph = inputGraph[:len(inputGraph)-1]
+                        if event.key == pygame.K_RETURN:
+                            showGraph(inputGraph)
+
+                    print(inputGraph)
+                    TEXT = font.render(inputGraph, True, BLACK) 
+                    screen.blit(TEXT, (WINDOW_SIZE[0]/2 - 230, WINDOW_SIZE[1]/2 - 70))
+
+        pygame.display.flip()     
+
+
+def main():
+
+    firstPage()
+
+    
+    # 1 - Visualiza o grafo
+    # 2 - Para visualizar a matrizes de adjacencia
+    # 3 - Para visualizar a matriz de incidencia
+    #view = 1
+
+    #print("insira o grafo:")
+
+    #listGraph = input().split(";")
+
+    #matrix = Matrix(listGraph)
+
+    #print(listGraph)
+
+    #graph = Graph(matrix.getGraph(), matrix.getSize())
+
+    #graph.printGraph()
+    #print(listGraph)
+    #window(view, graph, matrix)
 
 main()

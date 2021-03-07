@@ -60,6 +60,7 @@ class Edge:
         self.x = 0
         self.y = 0
         self.weightColor = (0,0,0)
+    
     def setHighlight(self,h):
         self.highlight = h
         if h == True:
@@ -73,6 +74,7 @@ class Edge:
 
     def getPos(self):
         return [self.x, self.y]
+    
     def setWeight(self, w):
         self.weight = w
 

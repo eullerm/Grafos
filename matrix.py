@@ -9,7 +9,7 @@ class Matrix:
         self.row = 0
         self.adjacencyColumn = 0
         self.incidenceColumn = 0
-        self.countEdge = 0
+        self.countEdge = 1
         self.graph = {}
         self.vertexEdge = {}
 
@@ -20,7 +20,7 @@ class Matrix:
             lineIncidence = []
             for j in range(self.matrixSize):
                 lineAdjacency.append(0)
-            for j in range(self.countEdge):
+            for j in range(self.countEdge-1):
                 lineIncidence.append(0)
 
             self.adjacencyMatrix.append(lineAdjacency)
@@ -38,7 +38,9 @@ class Matrix:
 
         for key in graph.keys():
             for value in graph[key]:
-                self.adjacencyMatrix[int(key)-1][int(value)-1] = 1 
+                if value:
+                    self.adjacencyMatrix[int(key)-1][int(value)-1] = 1 
+                
         
         print("###########")
         print("ADJACENCIA")
@@ -48,8 +50,10 @@ class Matrix:
     def initIncidenceMatrix(self, graph, vertexEdge):
 
         for key in graph.keys():
-            for value in vertexEdge[key]:    
-                self.incidenceMatrix[int(key)-1][int(value)] += 1 
+            for value in vertexEdge[key]:
+                if value:    
+                    self.incidenceMatrix[int(key)-1][int(value)-1] = 1 
+
 
         print("###########")
         print("INCIDENCIA")
@@ -77,8 +81,8 @@ class Matrix:
 
     #Caso mude o peso da aresta
     def changeWeight(self, v1, v2, newWeight):
-        self.adjacencyMatrix[v1][v2] = newWeight
-        self.adjacencyMatrix[v2][v1] = newWeight
+        self.adjacencyMatrix[v1-1][v2-1] = newWeight
+        self.adjacencyMatrix[v2-1][v1-1] = newWeight
 
     def createGraph(self, listGraph):
 
@@ -108,10 +112,25 @@ class Matrix:
                 if int(connection[2]) > self.matrixSize:
                     self.matrixSize = self.row = self.adjacencyColumn  = int(connection[2]) 
                 
-            
                 self.countEdge += 1
-                self.incidenceColumn = self.countEdge
+                self.incidenceColumn = self.countEdge - 1
+            
+            else:
+                if(self.graph.get(connection[0])):
+                    self.graph[connection[0]].append(False)
+                    self.vertexEdge[connection[0]].append(False)#Associa um vertice a uma aresta
+                    
+                elif(not self.graph.get(connection[0])):
+                    self.graph[connection[0]] = [False]
+                    self.vertexEdge[connection[0]] = [False]
+
+                if int(connection[0]) > self.matrixSize:
+                    self.matrixSize = self.row = self.adjacencyColumn = int(connection[0])
+            
+
+
 
     
     def getGraph(self):
+        print(self.graph)
         return self.graph
