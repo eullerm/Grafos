@@ -13,7 +13,6 @@ if getattr(sys, "frozen", False):
 from graph import Graph
 from matrix import Matrix
 import pygame
-import math
 from math import cos, pi, radians, sin
 
 BLACK = (0, 0, 0)
@@ -211,18 +210,13 @@ def drawGraph(graph, screen):
                 textX = 0
                 textY = 0
 
-                if(vertexAx < centerX and vertexAy == centerY):
-                    textX = -28
-                
-                elif(vertexBx > centerY and vertexBx == centerX):
-                    textX = 20
-
                 if( (vertexAx - vertexBx) == 0):
-                    textX = -40
-                    textY = -2
-                if( (vertexAy - vertexBy) == 0):
                     textX = 2
                     textY = -60
+                if( (vertexAy - vertexBy) == 0):
+                    textX = -40
+                    textY = -2
+
                 e.setPos(line.centerx + textX, line.centery + textY)
                 screen.blit(e.sprite, e.getPos())
                 textWeight = font2.render(str(e.getWeight()), True, e.weightColor)
