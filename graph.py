@@ -1,3 +1,4 @@
+from matrix import Matrix
 import pygame
 
 class Vertex:
@@ -94,7 +95,7 @@ class Graph:
         self.listOfVertex = [-1] * size #O -1 é para poder desenhar vetores com vertices faltando
         self.size = 0
         
-        self.buildGraph(data)
+        self.buildGraph(data) #Passa a matriz para construir o grafo
 
         self.countSize(self.listOfVertex)
 
@@ -108,7 +109,7 @@ class Graph:
     def getEdges(self):
         return self.listOfEdges
     
-    def countSize(self, listV):
+    def countSize(self, listV): #Conta o tamanho real do grafo
 
         size = len(listV)
         for i in listV:
@@ -135,12 +136,14 @@ class Graph:
         print("##############")
 
     def buildGraph(self, data):
-         
-        for i in data:
+
+        graph = data.getGraph() 
+        
+        for i in graph:
             v = Vertex(i, 1, 0, 0, False)
-            for j in data[i]:
+            for j in graph[i]:
                 if(not self.isSet(self.listOfEdges, [i, j])):   
-                    e = Edge(i, j, 1, False)
+                    e = Edge(i, j, data.getWeight(int(i)-1, int(j)-1), False)
                     self.listOfEdges.append(e)
             self.listOfVertex[int(i) - 1] = v
 

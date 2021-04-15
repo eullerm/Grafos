@@ -12,6 +12,7 @@ class Matrix:
         self.countEdge = 1
         self.graph = {}
         self.vertexEdge = {}
+        self.listWeight = list()
 
         self.createGraph(listGraph)
 
@@ -30,18 +31,20 @@ class Matrix:
 
         self.initIncidenceMatrix(self.graph, self.vertexEdge)
 
-        
-    
-    
-    
+  
     def initAdjacencyMatrix(self, graph):
 
+        w = 0
         for key in graph.keys():
             for value in graph[key]:
-                if value:
-                    self.adjacencyMatrix[int(key)-1][int(value)-1] = 1 
-                
-        
+                if value and self.adjacencyMatrix[int(key)-1][int(value)-1] == 0:
+                    self.adjacencyMatrix[int(key)-1][int(value)-1] = int(self.listWeight[w]) 
+                    self.adjacencyMatrix[int(value)-1][int(key)-1] = int(self.listWeight[w])
+                    w += 1
+
+                elif w >= len(self.listWeight):
+                    break
+
         print("###########")
         print("ADJACENCIA")
         print(self.adjacencyMatrix)
@@ -81,8 +84,8 @@ class Matrix:
 
     #Caso mude o peso da aresta
     def changeWeight(self, v1, v2, newWeight):
-        self.adjacencyMatrix[v1-1][v2-1] = newWeight
-        self.adjacencyMatrix[v2-1][v1-1] = newWeight
+        self.adjacencyMatrix[int(v1)-1][int(v2)-1] = newWeight
+        self.adjacencyMatrix[int(v2)-1][int(v1)-1] = newWeight
 
     def createGraph(self, listGraph):
 
@@ -111,7 +114,10 @@ class Matrix:
                     
                 if int(connection[2]) > self.matrixSize:
                     self.matrixSize = self.row = self.adjacencyColumn  = int(connection[2]) 
+            
                 
+                self.listWeight.append(connection[4])
+
                 self.countEdge += 1
                 self.incidenceColumn = self.countEdge - 1
             
@@ -128,9 +134,13 @@ class Matrix:
                     self.matrixSize = self.row = self.adjacencyColumn = int(connection[0])
             
 
-
+    def getWeight(self, row, column):
+        return self.adjacencyMatrix[row][column]
 
     
     def getGraph(self):
+        print("######################")
+        print("Grafo dentro da matriz")
         print(self.graph)
+        print("######################")
         return self.graph

@@ -339,26 +339,26 @@ def firstPage():
 
 def main():
 
-    firstPage()
+    #firstPage()
 
     
     # 1 - Visualiza o grafo
     # 2 - Para visualizar a matrizes de adjacencia
     # 3 - Para visualizar a matriz de incidencia
-    #view = 1
+    view = 1
 
-    #print("insira o grafo:")
+    print("insira o grafo:")
 
-    #listGraph = input().split(";")
+    listGraph = input().split(";")
 
-    #matrix = Matrix(listGraph)
+    matrix = Matrix(listGraph)
 
-    #print(listGraph)
+    print(listGraph)
 
-    #graph = Graph(matrix.getGraph(), matrix.getSize())
+    graph = Graph(matrix, matrix.getSize())
 
-    #graph.printGraph()
-    #print(listGraph)
-    #window(view, graph, matrix)
+    graph.printGraph()
+    print(listGraph)
+    window(view, graph, matrix)
 
 main()
