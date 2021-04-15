@@ -27,23 +27,18 @@ class Matrix:
             self.adjacencyMatrix.append(lineAdjacency)
             self.incidenceMatrix.append(lineIncidence)
 
-        self.initAdjacencyMatrix(self.graph)
+        self.initAdjacencyMatrix(self.listWeight)
 
         self.initIncidenceMatrix(self.graph, self.vertexEdge)
 
   
-    def initAdjacencyMatrix(self, graph):
-
-        w = 0
-        for key in graph.keys():
-            for value in graph[key]:
-                if value and self.adjacencyMatrix[int(key)-1][int(value)-1] == 0:
-                    self.adjacencyMatrix[int(key)-1][int(value)-1] = int(self.listWeight[w]) 
-                    self.adjacencyMatrix[int(value)-1][int(key)-1] = int(self.listWeight[w])
-                    w += 1
-
-                elif w >= len(self.listWeight):
-                    break
+    def initAdjacencyMatrix(self, listWeight):
+        
+        for w in listWeight:
+            
+            self.adjacencyMatrix[int(w[0])-1][int(w[1])-1] = int(w[2]) 
+            self.adjacencyMatrix[int(w[1])-1][int(w[0])-1] = int(w[2])
+            
 
         print("###########")
         print("ADJACENCIA")
@@ -116,7 +111,7 @@ class Matrix:
                     self.matrixSize = self.row = self.adjacencyColumn  = int(connection[2]) 
             
                 
-                self.listWeight.append(connection[4])
+                self.listWeight.append([connection[0], connection[2], connection[4]])
 
                 self.countEdge += 1
                 self.incidenceColumn = self.countEdge - 1
