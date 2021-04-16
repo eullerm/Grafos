@@ -68,9 +68,11 @@ def window(view, graph, matrix):
     font2 = pygame.font.SysFont('arial', fontSize)
 
     BUTTON1 = font2.render("Grafo", True, WHITE)
-    BUTTON2 = font2.render("Matriz de adjacência", True, WHITE)
-    BUTTON3 = font2.render("Matriz de incidência", True, WHITE)
-    BUTTON4 = font2.render("Voltar", True, WHITE)
+    BUTTON2 = font2.render("Kruskal", True, WHITE)
+    BUTTON3 = font2.render("Prim", True, WHITE)
+    BUTTON4 = font2.render("Matriz de adjacência", True, WHITE)
+    BUTTON5 = font2.render("Matriz de incidência", True, WHITE)
+    BUTTON6 = font2.render("Voltar", True, WHITE)
     
     pygame.display.set_caption('Trabalho de APA')
     
@@ -96,6 +98,14 @@ def window(view, graph, matrix):
         SQUARE4 = pygame.Rect(9 * WIDTH + 10 * MARGIN, MARGIN/2, 3 * WIDTH + 2 * MARGIN, TOP) 
         pygame.draw.rect(screen, BLACK, SQUARE4)
         screen.blit(BUTTON4, (9 * WIDTH + 13 * MARGIN, TOP/2))
+    
+        SQUARE5 = pygame.Rect(12 * WIDTH + 13 * MARGIN, MARGIN/2, 3 * WIDTH + 2 * MARGIN, TOP) 
+        pygame.draw.rect(screen, BLACK, SQUARE5)
+        screen.blit(BUTTON5, (12 * WIDTH + 16 * MARGIN, TOP/2))
+
+        SQUARE6 = pygame.Rect(15 * WIDTH + 16 * MARGIN, MARGIN/2, 3 * WIDTH + 2 * MARGIN, TOP) 
+        pygame.draw.rect(screen, BLACK, SQUARE6)
+        screen.blit(BUTTON6, (15 * WIDTH + 18 * MARGIN, TOP/2))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -111,10 +121,18 @@ def window(view, graph, matrix):
                 print(event.pos)
                 if SQUARE1.collidepoint(event.pos):
                     view = 1
+                    graph = Graph(matrix, matrix.getSize())
                 elif SQUARE2.collidepoint(event.pos):
-                    view = 2
+                    view = 2    
+                    graph = Graph(matrix, matrix.getSize())
                 elif SQUARE3.collidepoint(event.pos):
-                    view = 3
+                    view = 3 
+                    graph = Graph(matrix, matrix.getSize())
+                elif SQUARE4.collidepoint(event.pos):
+                    view = 4 
+                elif SQUARE5.collidepoint(event.pos):
+                    view = 5 
+
                 elif SQUARE4.collidepoint(event.pos):
                     running = False
                 for s in graph.getVertex():
@@ -134,11 +152,11 @@ def window(view, graph, matrix):
                     if(s != -1):
                         print(s.vertex, s.highlight)
 
-        if(view == 1):
-            drawGraph(graph, screen)
+        if(view == 1 or view == 2 or view == 3):
+            drawGraph(graph, screen, view)
 
-        elif(view == 2 or view == 3):#Matriz de adjacencia/incidencia
-            drawMatrix(matrix, screen, view-1)
+        elif(view == 4 or view == 5):#Matriz de adjacencia/incidencia
+            drawMatrix(matrix, screen, view-3)
 
 
         pygame.display.flip()     
@@ -165,7 +183,7 @@ def drawMatrix(matrix, screen, flag):
                             (MARGIN + HEIGHT) * row + TOP + fontSize/3,
                             ))
 
-def drawGraph(graph, screen):
+def drawGraph(graph, screen, flag):
 
     pygame.font.init()
     fontSize = 30
@@ -177,7 +195,14 @@ def drawGraph(graph, screen):
     centerY = screen.get_height() / 2
     radius = 200
     vertexList = graph.getVertex()
-    edgeList = graph.getEdges()
+    
+    if (flag == 1):
+        edgeList = graph.getEdges()
+    elif(flag == 2):
+        edgeList = graph.getEdgesKruskal()
+    elif(flag == 3):
+        pass
+
     angle = radians(0)
     rotate = radians(360 / graph.getSize())
 
@@ -197,6 +222,7 @@ def drawGraph(graph, screen):
 
         vertexA = int(e.getEdge()[0])
         vertexB = int(e.getEdge()[1])
+            
 
         if(vertexA != vertexB and vertexA and vertexB):
             try:
@@ -336,15 +362,15 @@ def firstPage():
 
         pygame.display.flip()     
 
-
 def main():
 
     #firstPage()
-
     
     # 1 - Visualiza o grafo
-    # 2 - Para visualizar a matrizes de adjacencia
-    # 3 - Para visualizar a matriz de incidencia
+    # 2 - Kruskal
+    # 3 - Prim
+    # 4 - Para visualizar a matrizes de adjacencia
+    # 5 - Para visualizar a matriz de incidencia
     view = 1
 
     print("insira o grafo:")

@@ -67,7 +67,7 @@ class Edge:
         if h == True:
             self.weightColor = (255,0,0)
         else:
-            self.weightColor =(0,0,0)
+            self.weightColor = (0,0,0)
 
     def setPos(self, x, y):
         self.rect.x = self.x = x
@@ -94,10 +94,14 @@ class Graph:
         self.listOfEdges = []
         self.listOfVertex = [-1] * size #O -1 é para poder desenhar vetores com vertices faltando
         self.size = 0
-        
-        self.buildGraph(data) #Passa a matriz para construir o grafo
+
+        self.graphKruskalMST = list()
+        self.listOfEdgesKruskal = []
+        self.listOfVertexKruskal = [-1] * size
 
         self.countSize(self.listOfVertex)
+        self.buildGraph(data) #Passa a matriz para construir o grafo 
+        self.KruskalMST(data)
 
     def setVertex(self, key, weight):
         v = Vertex(key, weight)
@@ -108,6 +112,9 @@ class Graph:
 
     def getEdges(self):
         return self.listOfEdges
+    
+    def getEdgesKruskal(self):
+        return self.listOfEdgesKruskal
     
     def countSize(self, listV): #Conta o tamanho real do grafo
 
@@ -129,7 +136,6 @@ class Graph:
             except AttributeError:
                 print("Casa vazia")
         print("##############")
-
         print("Edges")
         for e in self.listOfEdges:
             print(e.edge, e.weight)
@@ -158,5 +164,97 @@ class Graph:
 
         return False
 
+    # A utility function to find set of an element i
+    # (uses path compression technique)
+    def find(self, parent, i):
+        if parent[i] == i:
+            return i
+        return self.find(parent, parent[i])
+ 
+    # A function that does union of two sets of x and y
+    # (uses union by rank)
+    def union(self, parent, rank, x, y):
+        xroot = self.find(parent, x)
+        yroot = self.find(parent, y)
+ 
+        # Attach smaller rank tree under root of
+        # high rank tree (Union by Rank)
+        if rank[xroot] < rank[yroot]:
+            parent[xroot] = yroot
+        elif rank[xroot] > rank[yroot]:
+            parent[yroot] = xroot
+ 
+        # If ranks are same, then make one as root
+        # and increment its rank by one
+        else:
+            parent[yroot] = xroot
+            rank[xroot] += 1
+ 
+    # The main function to construct MST using Kruskal's
+        # algorithm
+    def KruskalMST(self, data):
+          
+        # An index variable, used for sorted edges
+        i = 0
+         
+        # An index variable, used for result[]
+        e = 0
+ 
+        # Step 1:  Sort all the edges in
+        # non-decreasing order of their
+        # weight.  If we are not allowed to change the
+        graph = list()
+        for edge in self.listOfEdges:
+            graph.append([int(edge.edge[0])-1, int(edge.edge[1])-1, int(edge.weight)])#Pega os vertices e os pesos [v1, v2, p]
+        # given graph, we can create a copy of graph
+        ordered = sorted(graph,
+                            key=lambda item: item[2])
+ 
+        parent = []
+        rank = []
+ 
+        # Create V subsets with single elements
+        for node in range(self.size):
+            parent.append(node)
+            rank.append(0)
+ 
+        # Number of edges to be taken is equal to V-1
+        while e < self.size - 1:
+ 
+            # Step 2: Pick the smallest edge and increment
+            # the index for next iteration
+            u, v, w = ordered[i]
+            i = i + 1
+            x = self.find(parent, u)
+            y = self.find(parent, v)
+ 
+            # If including this edge does't
+            #  cause cycle, include it in result
+            #  and increment the indexof result
+            # for next edge
+            if x != y:
+                e = e + 1
+                self.graphKruskalMST.append([int(u) + 1, int(v) + 1, w])
+                self.union(parent, rank, x, y)
+            # Else discard the edge
+ 
+        minimumCost = 0
+        print ("Edges in the constructed MST")
+        for u, v, weight in self.graphKruskalMST:
+            minimumCost += weight
+            print("%d -- %d == %d" % (u, v, weight))
+        print("Minimum Spanning Tree" , minimumCost)
+        print("#########################")
 
+        for i in self.graphKruskalMST:
+            v = Vertex(i[0], 1, 0, 0, False)
+            v2 = Vertex(i[1], 1, 0, 0, False)
+            if(not self.isSet(self.listOfEdgesKruskal, [i[0], i[1]])):   
+                e = Edge(i[0], i[1], data.getWeight(int(i[0])-1, int(i[1])-1), False)
+                self.listOfEdgesKruskal.append(e)
+            self.listOfVertexKruskal[int(i[0]) - 1] = v
+            self.listOfVertexKruskal[int(i[1]) - 1] = v2
     
+
+    def getKruskal(self):
+        return self.graphKruskalMST

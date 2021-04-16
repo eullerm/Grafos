@@ -128,14 +128,25 @@ class Matrix:
                 if int(connection[0]) > self.matrixSize:
                     self.matrixSize = self.row = self.adjacencyColumn = int(connection[0])
             
-
     def getWeight(self, row, column):
         return self.adjacencyMatrix[row][column]
-
-    
+  
     def getGraph(self):
         print("######################")
         print("Grafo dentro da matriz")
         print(self.graph)
         print("######################")
         return self.graph
+
+    def getVW(self):
+
+        listVW = list()
+
+        for i in range (len(self.adjacencyMatrix)):
+            for j in range(len(self.adjacencyMatrix[i])):
+                w = self.adjacencyMatrix[i][j]
+                if(w != 0):
+                    listVW.append([i+1, j+1, w])
+
+        return listVW
+
