@@ -94,14 +94,19 @@ class Graph:
         self.listOfEdges = []
         self.listOfVertex = [-1] * size #O -1 é para poder desenhar vetores com vertices faltando
         self.size = 0
+        self.data = data
 
         self.graphKruskalMST = list()
         self.listOfEdgesKruskal = []
         self.listOfVertexKruskal = [-1] * size
 
+        self.graphPrimMST = list()
+        self.listOfEdgesPrim = []
+        self.listOfVertexPrim = [-1] * size
+
         self.countSize(self.listOfVertex)
         self.buildGraph(data) #Passa a matriz para construir o grafo 
-        self.KruskalMST(data)
+        #self.kruskalMST(data)
 
     def setVertex(self, key, weight):
         v = Vertex(key, weight)
@@ -115,6 +120,9 @@ class Graph:
     
     def getEdgesKruskal(self):
         return self.listOfEdgesKruskal
+    
+    def getEdgesPrim(self):
+        return self.listOfEdgesPrim
     
     def countSize(self, listV): #Conta o tamanho real do grafo
 
@@ -192,7 +200,7 @@ class Graph:
  
     # The main function to construct MST using Kruskal's
         # algorithm
-    def KruskalMST(self, data):
+    def kruskalMST(self):
           
         # An index variable, used for sorted edges
         i = 0
@@ -250,7 +258,7 @@ class Graph:
             v = Vertex(i[0], 1, 0, 0, False)
             v2 = Vertex(i[1], 1, 0, 0, False)
             if(not self.isSet(self.listOfEdgesKruskal, [i[0], i[1]])):   
-                e = Edge(i[0], i[1], data.getWeight(int(i[0])-1, int(i[1])-1), False)
+                e = Edge(i[0], i[1], self.data.getWeight(int(i[0])-1, int(i[1])-1), False)
                 self.listOfEdgesKruskal.append(e)
             self.listOfVertexKruskal[int(i[0]) - 1] = v
             self.listOfVertexKruskal[int(i[1]) - 1] = v2
@@ -258,3 +266,55 @@ class Graph:
 
     def getKruskal(self):
         return self.graphKruskalMST
+
+    
+    def primMST(self):
+
+        INF = 9999999
+        # number of vertices in graph
+        V = 5
+        # create a 2d array of size 5x5
+        # for adjacency matrix to represent graph
+        G = self.data.getAdjacencyMatrix()
+        # create a array to track selected vertex
+        # selected will become true otherwise false
+        selected = [0] * self.size
+        # set number of edge to 0
+        no_edge = 0
+        # the number of egde in minimum spanning tree will be
+        # always less than(V - 1), where V is number of vertices in
+        # graph
+        # choose 0th vertex and make it true
+        selected[0] = True
+        # print for edge and weight
+        print("Edge : Weight\n")
+        while (no_edge < self.size - 1):
+            # For every vertex in the set S, find the all adjacent vertices
+            #, calculate the distance from the vertex selected at step 1.
+            # if the vertex is already in the set S, discard it otherwise
+            # choose another vertex nearest to selected vertex  at step 1.
+            minimum = INF
+            x = 0
+            y = 0
+            for i in range(self.size):
+                if selected[i]:
+                    for j in range(self.size):
+                        if ((not selected[j]) and G[i][j]):  
+                            # not in selected and there is an edge
+                            if minimum > G[i][j]:
+                                minimum = G[i][j]
+                                x = i
+                                y = j
+            
+            self.graphPrimMST.append([int(x) + 1, int(y) + 1, int(G[x][y])])
+            for i in self.graphPrimMST:
+                v = Vertex(i[0], 1, 0, 0, False)
+                v2 = Vertex(i[1], 1, 0, 0, False)
+                if(not self.isSet(self.listOfEdgesPrim, [i[0], i[1]])):   
+                    e = Edge(i[0], i[1], G[x][y], False)
+                    self.listOfEdgesPrim.append(e)
+                self.listOfVertexPrim[int(i[0]) - 1] = v
+                self.listOfVertexPrim[int(i[1]) - 1] = v2
+            print(str(x) + "-" + str(y) + ":" + str(G[x][y]))
+            selected[y] = True
+            no_edge += 1

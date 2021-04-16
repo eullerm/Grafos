@@ -150,3 +150,6 @@ class Matrix:
 
         return listVW
 
+
+    def getAdjacencyMatrix(self):
+        return self.adjacencyMatrix

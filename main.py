@@ -125,9 +125,11 @@ def window(view, graph, matrix):
                 elif SQUARE2.collidepoint(event.pos):
                     view = 2    
                     graph = Graph(matrix, matrix.getSize())
+                    graph.kruskalMST()
                 elif SQUARE3.collidepoint(event.pos):
                     view = 3 
                     graph = Graph(matrix, matrix.getSize())
+                    graph.primMST()
                 elif SQUARE4.collidepoint(event.pos):
                     view = 4 
                 elif SQUARE5.collidepoint(event.pos):
@@ -201,7 +203,7 @@ def drawGraph(graph, screen, flag):
     elif(flag == 2):
         edgeList = graph.getEdgesKruskal()
     elif(flag == 3):
-        pass
+        edgeList = graph.getEdgesPrim()
 
     angle = radians(0)
     rotate = radians(360 / graph.getSize())
