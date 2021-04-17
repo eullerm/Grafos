@@ -1,6 +1,10 @@
 from matrix import Matrix
 import pygame
 
+kruskal = []
+prim = []
+
+
 class Vertex:
 
     def __init__(self, vertex, weight, x, y, highlight):
@@ -87,6 +91,8 @@ class Edge:
 
     def getHighlight(self):
         return self.highlight
+
+
 
 class Graph:
 
@@ -231,21 +237,25 @@ class Graph:
  
             # Step 2: Pick the smallest edge and increment
             # the index for next iteration
+            line=[]
             u, v, w = ordered[i]
             i = i + 1
             x = self.find(parent, u)
             y = self.find(parent, v)
- 
+            line.append("found " + str(u) + " on position " + str(x)+"found " + str(y) + " on position " + str(parent[v])+" ")
             # If including this edge does't
             #  cause cycle, include it in result
             #  and increment the indexof result
             # for next edge
             if x != y:
+                line.append(str(u)+" and "+str(v)+" are not in the same tree"+" union("+str(u)+", "+str(v)+")")
                 e = e + 1
                 self.graphKruskalMST.append([int(u) + 1, int(v) + 1, w])
                 self.union(parent, rank, x, y)
             # Else discard the edge
- 
+            else:
+                line.append(str(u)+" and "+str(v)+"are in the same tree, do nothing.")
+            kruskal.append(line)
         minimumCost = 0
         print ("Edges in the constructed MST")
         for u, v, weight in self.graphKruskalMST:
@@ -262,7 +272,7 @@ class Graph:
                 self.listOfEdgesKruskal.append(e)
             self.listOfVertexKruskal[int(i[0]) - 1] = v
             self.listOfVertexKruskal[int(i[1]) - 1] = v2
-    
+        print("find steps:", kruskal)
 
     def getKruskal(self):
         return self.graphKruskalMST

@@ -3,6 +3,7 @@
 ####
 
 import os, sys
+import controller as c
 dirpath = os.getcwd()
 sys.path.append(dirpath)
 if getattr(sys, "frozen", False):
@@ -60,6 +61,8 @@ def keyInput(event, object, string, object2 = False):
     return string
 
 def window(view, graph, matrix):
+
+    controller = c.Control(0,0)
 
     pygame.font.init()
     string = ''
@@ -153,7 +156,7 @@ def window(view, graph, matrix):
                 for s in graph.getVertex():
                     if(s != -1):
                         print(s.vertex, s.highlight)
-
+        drawControl(controller,screen)
         if(view == 1 or view == 2 or view == 3):
             drawGraph(graph, screen, view)
 
@@ -163,7 +166,12 @@ def window(view, graph, matrix):
 
         pygame.display.flip()     
 
-
+def drawControl(control, screen):
+    screen.blit(control.play, (control.rectPlay.x, control.rectPlay.y))
+    screen.blit(control.pause, (control.rectPause.x, control.rectPause.y))
+    screen.blit(control.next, (control.rectNext.x, control.rectNext.y))
+    screen.blit(control.prev, (control.rectPrev.x, control.rectPrev.y))
+    screen.blit(control.stop, (control.rectStop.x, control.rectStop.y))
 
 def drawMatrix(matrix, screen, flag):
     
@@ -189,7 +197,6 @@ def drawGraph(graph, screen, flag):
 
     pygame.font.init()
     fontSize = 30
-    RED = (255, 0, 0)
     font = pygame.font.SysFont('arial', fontSize)
     font2 = pygame.font.SysFont('arial', int(fontSize/2)+5)
 
@@ -373,9 +380,9 @@ def main():
     # 3 - Prim
     # 4 - Para visualizar a matrizes de adjacencia
     # 5 - Para visualizar a matriz de incidencia
-    view = 1
+    view = 2
 
-    print("insira o grafo:")
+    print("insira o grafo:(VerticeA-VerticeB-Peso)")
 
     listGraph = input().split(";")
 
