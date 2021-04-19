@@ -140,6 +140,17 @@ def window(view, graph, matrix):
 
                 elif SQUARE4.collidepoint(event.pos):
                     running = False
+                elif controller.rectNext.collidepoint(event.pos):
+                    print("next")
+                elif controller.rectPrev.collidepoint(event.pos):
+                    print("prev")
+                elif controller.rectPlay.collidepoint(event.pos):
+                    print("play")
+                elif controller.rectPause.collidepoint(event.pos):
+                    print("pause")
+                elif controller.rectStop.collidepoint(event.pos):
+                    print("stop")
+
                 for s in graph.getVertex():
                     if(s != -1):
                         if s.getHighlight():

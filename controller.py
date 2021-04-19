@@ -35,5 +35,21 @@ class Control:
         self.rectStop = self.stop.get_rect()
         self.rectStop.x += 10
         self.rectStop.y += 700
+    def getButtonsRect(self):
+        return [self.rectNext, self.rectPause, self.rectStop, self.rectPlay, self.rectPrev]
+    def getButtons(self):
+        return [self.next, self.pause, self.stop, self.play, self.prev]
 
-
+    def highlight(self, button):
+        if button == "play":
+            pass
+        elif button == "pause":
+            pass
+        elif button == "stop":
+            pass
+        elif button == "next":
+            pass
+        elif button == "prev":
+            pass
+        else:
+            pass
