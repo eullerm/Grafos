@@ -142,8 +142,7 @@ def window(view, graph, matrix):
                     view = 4 
                 elif SQUARE5.collidepoint(event.pos):
                     view = 5 
-
-                elif SQUARE4.collidepoint(event.pos):
+                elif SQUARE6.collidepoint(event.pos):
                     running = False
                 if view == 2:
                     if controller.rectNext.collidepoint(event.pos):
@@ -354,7 +353,7 @@ def showGraph(inputGraph):
 
     print(listGraph)
 
-    graph = Graph(matrix.getGraph(), matrix.getSize())
+    graph = Graph(matrix, matrix.getSize())
 
     graph.printGraph()
     print(listGraph)
@@ -454,7 +453,7 @@ def main():
     # 3 - Prim
     # 4 - Para visualizar a matrizes de adjacencia
     # 5 - Para visualizar a matriz de incidencia
-    view = 2
+    view = 1
 
     print("insira o grafo:(VerticeA-VerticeB-Peso)")
 
