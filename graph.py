@@ -64,13 +64,16 @@ class Edge:
         self.x = 0
         self.y = 0
         self.weightColor = (0,0,0)
+        self.edgeColor = (0,0,0)
     
     def setHighlight(self,h):
         self.highlight = h
         if h == True:
-            self.weightColor = (255,0,0)
+            self.weightColor = (255, 0, 0)
+            self.edgeColor = (255, 0, 0)
         else:
-            self.weightColor = (0,0,0)
+            self.weightColor = (0, 0, 0)
+            self.edgeColor = (0, 0, 0)
 
     def setPos(self, x, y):
         self.rect.x = self.x = x
@@ -90,6 +93,10 @@ class Edge:
 
     def getHighlight(self):
         return self.highlight
+    def getColor(self):
+        return self.edgeColor
+    def setColor(self, color):
+        self.edgeColor = color
 
 
 

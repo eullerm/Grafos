@@ -32,7 +32,7 @@ WIDTH = 60
 HEIGHT = 60
 MARGIN = 10
 
-cursor = 0
+cursor = -1
 
 def keyInput(event, object, string, object2 = False):
     for o in object:
@@ -170,9 +170,9 @@ def window(view, graph, matrix):
                 for e in graph.getEdges():
                     #print(e.getPos())
                     #print(e.sprite.get_rect().x)
-                    if e.highlight == True:
+                    if e.highlight == True and view == 1:
                         e.setHighlight(False)
-                    if e.rect.collidepoint(event.pos):
+                    if e.rect.collidepoint(event.pos) and view == 1:
                         e.setHighlight(True)
                 for s in graph.getVertex():
                     if(s != -1):
@@ -217,12 +217,14 @@ def drawMatrix(matrix, screen, flag):
 
 def highlightEdge(graph, unionList):
     for e in graph.listOfEdges:
-        if(e.edge[0] == unionList[0] and e.edge[1] == unionList[1]):
+        if(e.edge[0] == str(unionList[0]) and e.edge[1] == str(unionList[1])):
             e.setHighlight(True)
+            print("oi",e)
+
 
 
 def unionList(string):
-    x = string[0].split(' union')
+    x = string.split(' union')
     a = ''
     b = ''
     antes = 1
@@ -234,19 +236,21 @@ def unionList(string):
         elif antes == 0 and c != '(' and c != ')' and c != ' ':
             b += c
     return [int(a)+1, int(b)+1]
-
+def prepare(steps):
+    res=[]
+    for a in steps:
+        for b in a:
+            for c in b:
+                res.append(c[0])
+    return res
 
 
 def stepGraph(graph, screen, flag, control):
     global cursor
-    steps = graph.getKruskalSteps()
+    steps = prepare(graph.getKruskalSteps())
+    print(steps)
     if control == "play":
-        while cursor < len(steps):
-            for e in graph.getEdges():
-                if True:
-                    pass
-            t.sleep(3)
-            cursor += 1
+        cursor += 1
     elif control == "stop":
         cursor = 0
     elif control == "pause":
@@ -257,31 +261,35 @@ def stepGraph(graph, screen, flag, control):
         cursor -= 1
     else:
         pass
-    for a in steps:
-        for b in a:
-            for c in b:
-                if "union" in c[0]:
-                    x = unionList(c)
-                    highlightEdge(graph, x)
+    print("current step: ", steps[cursor])
+    if "union" in steps[cursor]:
+        x = unionList(steps[cursor])
+        highlightEdge(graph, x)
+    '''for a in steps:
+        if "union" in a:
+            x = unionList(a)
+            highlightEdge(graph, x)
     for e in graph.listOfEdges:
         if e.highlight:
-            print(e.edge," true")
+            print(e.edge," true")'''
+
 def drawGraph(graph, screen, flag):
 
     pygame.font.init()
     fontSize = 30
     font = pygame.font.SysFont('arial', fontSize)
     font2 = pygame.font.SysFont('arial', int(fontSize/2)+5)
-
+    RED = (255, 0, 0)
     centerX = screen.get_width() /2
     centerY = screen.get_height() / 2
     radius = 200
     vertexList = graph.getVertex()
-    
+
+
     if (flag == 1):
         edgeList = graph.getEdges()
     elif(flag == 2):
-        edgeList = graph.getEdgesKruskal()
+        edgeList = graph.getEdges()
     elif(flag == 3):
         edgeList = graph.getEdgesPrim()
 
@@ -313,7 +321,10 @@ def drawGraph(graph, screen, flag):
                 vertexBx = vertexList[vertexB - 1].getPos()[0] + 25
                 vertexBy = vertexList[vertexB - 1].getPos()[1] + 25
 
-                line = pygame.draw.line(screen, BLACK, (vertexAx, vertexAy), (vertexBx, vertexBy), 1)
+                if e.highlight:
+                    line = pygame.draw.line(screen, e.getColor(), (vertexAx, vertexAy), (vertexBx, vertexBy), 1)
+                else:
+                    line = pygame.draw.line(screen, e.getColor(), (vertexAx, vertexAy), (vertexBx, vertexBy), 1)
 
                 textX = 0
                 textY = 0
