@@ -3,6 +3,8 @@
 ####
 
 import os, sys
+import re
+
 import controller as c
 import time as t
 dirpath = os.getcwd()
@@ -214,13 +216,36 @@ def drawMatrix(matrix, screen, flag):
                             (MARGIN + HEIGHT) * row + TOP + fontSize/3,
                             ))
 
+def highlightEdge(graph, unionList):
+    for e in graph.listOfEdges:
+        if(e.edge[0] == unionList[0] and e.edge[1] == unionList[1]):
+            e.setHighlight(True)
+
+
+def unionList(string):
+    x = string[0].split(' union')
+    a = ''
+    b = ''
+    antes = 1
+    for c in x[1]:
+        if c == ',':
+            antes = 0
+        elif antes == 1 and c != '(' and c != ')' and c != ' ':
+            a += c
+        elif antes == 0 and c != '(' and c != ')' and c != ' ':
+            b += c
+    return [int(a)+1, int(b)+1]
+
 
 
 def stepGraph(graph, screen, flag, control):
     global cursor
-    print(graph.kruskal[cursor])
+    steps = graph.getKruskalSteps()
     if control == "play":
-        while cursor < len(graph.getKruskalSteps()):
+        while cursor < len(steps):
+            for e in graph.getEdges():
+                if True:
+                    pass
             t.sleep(3)
             cursor += 1
     elif control == "stop":
@@ -229,11 +254,19 @@ def stepGraph(graph, screen, flag, control):
         pass
     elif control == "next":
         cursor += 1
-
     elif control == "prev":
         cursor -= 1
     else:
-        return "invalid command"
+        pass
+    for a in steps:
+        for b in a:
+            for c in b:
+                if "union" in c[0]:
+                    x = unionList(c)
+                    highlightEdge(graph, x)
+    for e in graph.listOfEdges:
+        if e.highlight:
+            print(e.edge," true")
 def drawGraph(graph, screen, flag):
 
     pygame.font.init()

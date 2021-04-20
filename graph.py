@@ -151,7 +151,7 @@ class Graph:
             except AttributeError:
                 print("Casa vazia")
         print("##############")
-        print("Edges")
+        print("Arestas")
         for e in self.listOfEdges:
             print(e.edge, e.weight)
         print("##############")
@@ -255,15 +255,15 @@ class Graph:
                 self.union(parent, rank, x, y)
             # Else discard the edge
             else:
-                line.append(str(u)+" and "+str(v)+"are in the same tree, do nothing.")
+                line.append([[str(u)+" and "+str(v)+"are in the same tree, do nothing."]])
             self.kruskal.append(line)
         minimumCost = 0
-        print ("Edges in the constructed MST")
+        print ("Arestas da arvore minima")
         for u, v, weight in self.graphKruskalMST:
             minimumCost += weight
             print("%d -- %d == %d" % (u, v, weight))
-        print("Minimum Spanning Tree" , minimumCost)
-        print("#########################")
+        print("Arvore minima com custo " , minimumCost)
+        #print("#########################")
 
         for i in self.graphKruskalMST:
             v = Vertex(i[0], 1, 0, 0, False)
@@ -299,7 +299,7 @@ class Graph:
         # choose 0th vertex and make it true
         selected[0] = True
         # print for edge and weight
-        print("Edge : Weight\n")
+        print("Aresta : Peso\n")
         while (no_edge < self.size - 1):
             # For every vertex in the set S, find the all adjacent vertices
             #, calculate the distance from the vertex selected at step 1.
@@ -327,6 +327,6 @@ class Graph:
                     self.listOfEdgesPrim.append(e)
                 self.listOfVertexPrim[int(i[0]) - 1] = v
                 self.listOfVertexPrim[int(i[1]) - 1] = v2
-            print(str(x) + "-" + str(y) + ":" + str(G[x][y]))
+            print(str(x+1) + "-" + str(y+1) + ":" + str(G[x][y]))
             selected[y] = True
             no_edge += 1
