@@ -4,6 +4,7 @@
 
 import os, sys
 import controller as c
+import time as t
 dirpath = os.getcwd()
 sys.path.append(dirpath)
 if getattr(sys, "frozen", False):
@@ -28,6 +29,8 @@ TOP = 80
 WIDTH = 60
 HEIGHT = 60
 MARGIN = 10
+
+cursor = 0
 
 def keyInput(event, object, string, object2 = False):
     for o in object:
@@ -121,7 +124,7 @@ def window(view, graph, matrix):
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 string =''
-                print(event.pos)
+                #print(event.pos)
                 if SQUARE1.collidepoint(event.pos):
                     view = 1
                     graph = Graph(matrix, matrix.getSize())
@@ -140,16 +143,22 @@ def window(view, graph, matrix):
 
                 elif SQUARE4.collidepoint(event.pos):
                     running = False
-                elif controller.rectNext.collidepoint(event.pos):
-                    print("next")
-                elif controller.rectPrev.collidepoint(event.pos):
-                    print("prev")
-                elif controller.rectPlay.collidepoint(event.pos):
-                    print("play")
-                elif controller.rectPause.collidepoint(event.pos):
-                    print("pause")
-                elif controller.rectStop.collidepoint(event.pos):
-                    print("stop")
+                if view == 2:
+                    if controller.rectNext.collidepoint(event.pos):
+                        stepGraph(graph, screen, view, "next")
+                        print("next")
+                    elif controller.rectPrev.collidepoint(event.pos):
+                        stepGraph(graph, screen, view, "prev")
+                        print("prev")
+                    elif controller.rectPlay.collidepoint(event.pos):
+                        stepGraph(graph, screen, view, "play")
+                        print("play")
+                    elif controller.rectPause.collidepoint(event.pos):
+                        stepGraph(graph, screen, view, "pause")
+                        print("pause")
+                    elif controller.rectStop.collidepoint(event.pos):
+                        stepGraph(graph, screen, view, "stop")
+                        print("stop")
 
                 for s in graph.getVertex():
                     if(s != -1):
@@ -158,15 +167,16 @@ def window(view, graph, matrix):
                         if s.rect.collidepoint(event.pos):
                             s.setHighlight(True)
                 for e in graph.getEdges():
-                    print(e.getPos())
-                    print(e.sprite.get_rect().x)
+                    #print(e.getPos())
+                    #print(e.sprite.get_rect().x)
                     if e.highlight == True:
                         e.setHighlight(False)
                     if e.rect.collidepoint(event.pos):
                         e.setHighlight(True)
                 for s in graph.getVertex():
                     if(s != -1):
-                        print(s.vertex, s.highlight)
+                        pass
+                        #print(s.vertex, s.highlight)
         drawControl(controller,screen)
         if(view == 1 or view == 2 or view == 3):
             drawGraph(graph, screen, view)
@@ -204,6 +214,26 @@ def drawMatrix(matrix, screen, flag):
                             (MARGIN + HEIGHT) * row + TOP + fontSize/3,
                             ))
 
+
+
+def stepGraph(graph, screen, flag, control):
+    global cursor
+    print(graph.kruskal[cursor])
+    if control == "play":
+        while cursor < len(graph.getKruskalSteps()):
+            t.sleep(3)
+            cursor += 1
+    elif control == "stop":
+        cursor = 0
+    elif control == "pause":
+        pass
+    elif control == "next":
+        cursor += 1
+
+    elif control == "prev":
+        cursor -= 1
+    else:
+        return "invalid command"
 def drawGraph(graph, screen, flag):
 
     pygame.font.init()
@@ -346,7 +376,7 @@ def firstPage():
             if event.type == pygame.KEYDOWN:
                     print(pressed)
                     if pressed:
-                        print(pressed)
+                        #print(pressed)
                         if event.key == pygame.K_0:
                             inputGraph += '0'
                         if event.key == pygame.K_1:
@@ -399,7 +429,7 @@ def main():
 
     matrix = Matrix(listGraph)
 
-    print(listGraph)
+    #print(listGraph)
 
     graph = Graph(matrix, matrix.getSize())
 

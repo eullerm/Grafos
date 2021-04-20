@@ -1,8 +1,7 @@
 from matrix import Matrix
 import pygame
 
-kruskal = []
-prim = []
+
 
 
 class Vertex:
@@ -113,6 +112,8 @@ class Graph:
         self.countSize(self.listOfVertex)
         self.buildGraph(data) #Passa a matriz para construir o grafo 
         #self.kruskalMST(data)
+        self.kruskal = []
+        self.prim = []
 
     def setVertex(self, key, weight):
         v = Vertex(key, weight)
@@ -242,20 +243,20 @@ class Graph:
             i = i + 1
             x = self.find(parent, u)
             y = self.find(parent, v)
-            line.append("found " + str(u) + " on position " + str(x)+"found " + str(y) + " on position " + str(parent[v])+" ")
+            line.append([["found " + str(u) + " on position " + str(x)], ["found " + str(y) + " on position " + str(parent[v])+" "]])
             # If including this edge does't
             #  cause cycle, include it in result
             #  and increment the indexof result
             # for next edge
             if x != y:
-                line.append(str(u)+" and "+str(v)+" are not in the same tree"+" union("+str(u)+", "+str(v)+")")
+                line.append([[str(u)+" and "+str(v)+" are not in the same tree"], [" union("+str(u)+", "+str(v)+")"]])
                 e = e + 1
                 self.graphKruskalMST.append([int(u) + 1, int(v) + 1, w])
                 self.union(parent, rank, x, y)
             # Else discard the edge
             else:
                 line.append(str(u)+" and "+str(v)+"are in the same tree, do nothing.")
-            kruskal.append(line)
+            self.kruskal.append(line)
         minimumCost = 0
         print ("Edges in the constructed MST")
         for u, v, weight in self.graphKruskalMST:
@@ -272,11 +273,12 @@ class Graph:
                 self.listOfEdgesKruskal.append(e)
             self.listOfVertexKruskal[int(i[0]) - 1] = v
             self.listOfVertexKruskal[int(i[1]) - 1] = v2
-        print("find steps:", kruskal)
+
 
     def getKruskal(self):
         return self.graphKruskalMST
-
+    def getKruskalSteps(self):
+        return self.kruskal
     
     def primMST(self):
 
