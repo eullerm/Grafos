@@ -66,14 +66,14 @@ class Edge:
         self.weightColor = (0,0,0)
         self.edgeColor = (0,0,0)
     
-    def setHighlight(self,h):
+    def setHighlight(self, h, color):
         self.highlight = h
         if h == True:
-            self.weightColor = (255, 0, 0)
-            self.edgeColor = (255, 0, 0)
+            self.weightColor = color
+            self.edgeColor = color
         else:
-            self.weightColor = (0, 0, 0)
-            self.edgeColor = (0, 0, 0)
+            self.weightColor = color
+            self.edgeColor = color
 
     def setPos(self, x, y):
         self.rect.x = self.x = x
@@ -93,9 +93,12 @@ class Edge:
 
     def getHighlight(self):
         return self.highlight
+    
     def getColor(self):
         return self.edgeColor
+    
     def setColor(self, color):
+        self.weightColor = color
         self.edgeColor = color
 
 
@@ -250,19 +253,19 @@ class Graph:
             i = i + 1
             x = self.find(parent, u)
             y = self.find(parent, v)
-            line.append([["found " + str(u) + " on position " + str(x)], ["found " + str(y) + " on position " + str(parent[v])+" "]])
+            line.append([["found " + str(u+1) + " on position " + str(x+1)], ["found " + str(v+1) + " on position " + str(y+1)+" "]])
             # If including this edge does't
             #  cause cycle, include it in result
             #  and increment the indexof result
             # for next edge
             if x != y:
-                line.append([[str(u)+" and "+str(v)+" are not in the same tree"], [" union("+str(u)+", "+str(v)+")"]])
+                line.append([[str(u+1)+" and "+str(v+1)+" are not in the same tree"], ["union ( "+str(u+1)+" , "+str(v+1)+" )"]])
                 e = e + 1
                 self.graphKruskalMST.append([int(u) + 1, int(v) + 1, w])
                 self.union(parent, rank, x, y)
             # Else discard the edge
             else:
-                line.append([[str(u)+" and "+str(v)+"are in the same tree, do nothing."]])
+                line.append([[str(u+1)+" and "+str(v+1)+" are in the same tree, do nothing."]])
             self.kruskal.append(line)
         minimumCost = 0
         print ("Arestas da arvore minima")

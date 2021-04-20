@@ -24,6 +24,7 @@ WHITE = (255, 255, 255)
 NUMBER_COLOR = (0, 0, 255)
 RED = (180, 0, 0)
 GREEN = (0, 180, 0)
+ORANGE = (229, 103, 23)
 SQUARE_COLOR = (80, 80, 0)
 
 WINDOW_SIZE = (1280, 800)
@@ -171,9 +172,9 @@ def window(view, graph, matrix):
                     #print(e.getPos())
                     #print(e.sprite.get_rect().x)
                     if e.highlight == True and view == 1:
-                        e.setHighlight(False)
+                        e.setHighlight(False, RED)
                     if e.rect.collidepoint(event.pos) and view == 1:
-                        e.setHighlight(True)
+                        e.setHighlight(True, GREEN)
                 for s in graph.getVertex():
                     if(s != -1):
                         pass
@@ -215,27 +216,33 @@ def drawMatrix(matrix, screen, flag):
                             (MARGIN + HEIGHT) * row + TOP + fontSize/3,
                             ))
 
-def highlightEdge(graph, unionList):
+def highlightEdge(graph, unionList, color):
     for e in graph.listOfEdges:
         if(e.edge[0] == str(unionList[0]) and e.edge[1] == str(unionList[1])):
-            e.setHighlight(True)
+            if(e.getColor() == color and color == GREEN):
+                e.setColor(ORANGE)
+            elif(e.getColor() == color and color == ORANGE):
+                e.setColor(BLACK)
+            else:
+                e.setColor(color)
             print("oi",e)
 
 
 
-def unionList(string):
-    x = string.split(' union')
-    a = ''
-    b = ''
-    antes = 1
-    for c in x[1]:
-        if c == ',':
-            antes = 0
-        elif antes == 1 and c != '(' and c != ')' and c != ' ':
-            a += c
-        elif antes == 0 and c != '(' and c != ')' and c != ' ':
-            b += c
-    return [int(a)+1, int(b)+1]
+def split(string, flag):
+    x = string.split(' ')
+    if flag == "union":
+        a = x[2]
+        b = x[4]
+    elif flag == "are not":
+        a = x[0]
+        b = x[2]
+    elif flag == "do nothing":
+        a = x[0]
+        b = x[2]
+    return [int(a), int(b)]
+ 
+
 def prepare(steps):
     res=[]
     for a in steps:
@@ -257,14 +264,27 @@ def stepGraph(graph, screen, flag, control):
         pass
     elif control == "next":
         cursor += 1
-    elif control == "prev":
+    
+    print("current step: ", steps[cursor])
+    if "union" in steps[cursor]:
+        x = split(steps[cursor], "union")
+        highlightEdge(graph, x, GREEN)
+    elif "are not" in steps[cursor]:
+        x = split(steps[cursor], "are not")
+        highlightEdge(graph, x, ORANGE)
+    elif "do nothing" in steps[cursor]:
+        x = split(steps[cursor], "do nothing")
+        highlightEdge(graph, x, BLACK)
+    
+    if control == "prev":
         cursor -= 1
     else:
         pass
-    print("current step: ", steps[cursor])
-    if "union" in steps[cursor]:
-        x = unionList(steps[cursor])
-        highlightEdge(graph, x)
+
+
+
+
+    
     '''for a in steps:
         if "union" in a:
             x = unionList(a)
@@ -322,9 +342,9 @@ def drawGraph(graph, screen, flag):
                 vertexBy = vertexList[vertexB - 1].getPos()[1] + 25
 
                 if e.highlight:
-                    line = pygame.draw.line(screen, e.getColor(), (vertexAx, vertexAy), (vertexBx, vertexBy), 1)
+                    line = pygame.draw.line(screen, e.getColor(), (vertexAx, vertexAy), (vertexBx, vertexBy), 2)
                 else:
-                    line = pygame.draw.line(screen, e.getColor(), (vertexAx, vertexAy), (vertexBx, vertexBy), 1)
+                    line = pygame.draw.line(screen, e.getColor(), (vertexAx, vertexAy), (vertexBx, vertexBy), 2)
 
                 textX = 0
                 textY = 0
