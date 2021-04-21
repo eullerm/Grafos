@@ -101,8 +101,6 @@ class Edge:
         self.weightColor = color
         self.edgeColor = color
 
-
-
 class Graph:
 
     def __init__(self, data, size):

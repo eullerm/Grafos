@@ -354,8 +354,6 @@ def stepGraph(graph, screen, flag, control):
             x = split(steps[cursor], "selected")
             highlightEdgePrim(graph, x, GREEN)
 
-        
-    
     if control == "prev":
         cursor -= 1
     else:
@@ -368,7 +366,7 @@ def drawGraph(graph, screen, flag):
     fontSize = 30
     font = pygame.font.SysFont('arial', fontSize)
     font2 = pygame.font.SysFont('arial', int(fontSize/2)+5)
-    centerX = screen.get_width() /2
+    centerX = screen.get_width() / 3
     centerY = screen.get_height() / 2
     radius = 200
     vertexList = graph.getVertex()
@@ -420,10 +418,10 @@ def drawGraph(graph, screen, flag):
                 textX = 0
                 textY = 0
 
-                if( (vertexAx - vertexBx) == 0):
+                if( abs(round(vertexAx - vertexBx)) == 0):
                     textX = 2
                     textY = -60
-                if( (vertexAy - vertexBy) == 0):
+                if( abs(round(vertexAy - vertexBy)) == 0):
                     textX = -40
                     textY = -2
 
@@ -448,6 +446,24 @@ def drawGraph(graph, screen, flag):
 
             screen.blit(text, (s.getPos()[0] + 15, s.getPos()[1] + 8))
             screen.blit(textWeight, (s.rect.x+18, s.rect.y-15))
+    
+    if (flag == 2):
+        fontKruskal = pygame.font.SysFont('arial', fontSize//2)
+        ordered = graph.getEdges()
+        ordered = sorted(graph.getEdges(), key=lambda item: item.getWeight())
+        columns = fontKruskal.render("V1 | V2 | Peso", True, BLACK)
+        screen.blit(columns, (centerX*2, centerY - 250))
+        i = 15
+        for o in ordered:
+            v1 = fontKruskal.render(" " + str(o.getEdge()[0]) + "  |  " + str(o.getEdge()[1]) + "   |  " + str(o.getWeight()), True, o.getColor())
+            screen.blit(v1, (centerX*2, centerY - 250 + i))
+            i += 15
+            #v2 = fontKruskal.render(str(o[1]), True, BLACK)
+            #screen.blit(v2, (line.centerx + textX, line.centery + textY))
+
+            #w = fontKruskal.render(str(o[2]), True, BLACK)
+            #screen.blit(w, (line.centerx + textX, line.centery + textY))
+
             
 def showGraph(inputGraph):
     listGraph = inputGraph.split(";")
