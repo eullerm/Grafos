@@ -216,9 +216,9 @@ def drawMatrix(matrix, screen, flag):
                             (MARGIN + HEIGHT) * row + TOP + fontSize/3,
                             ))
 
-def highlightEdge(graph, unionList, color):
+def highlightEdge(graph, l, color):
     for e in graph.listOfEdges:
-        if(e.edge[0] == str(unionList[0]) and e.edge[1] == str(unionList[1])):
+        if(e.edge[0] == str(l[0]) and e.edge[1] == str(l[1])):
             if(e.getColor() == color and color == GREEN):
                 e.setColor(ORANGE)
             elif(e.getColor() == color and color == ORANGE):
@@ -227,7 +227,13 @@ def highlightEdge(graph, unionList, color):
                 e.setColor(color)
             print("oi",e)
 
-
+def highlightVertex(graph, l):
+    for v in graph.listOfVertex:
+        if (v.getKey() == str(l[0]) and not v.getHighlight()):
+            print("vetex hilight", l[0])
+            v.setHighlight(True)
+        elif (v.getKey() == str(l[0]) and v.getHighlight()):
+            v.setHighlight(False)
 
 def split(string, flag):
     x = string.split(' ')
@@ -240,6 +246,9 @@ def split(string, flag):
     elif flag == "do nothing":
         a = x[0]
         b = x[2]
+    elif flag == "found":
+        a = x[1]
+        b = x[4]
     return [int(a), int(b)]
  
 
@@ -275,6 +284,10 @@ def stepGraph(graph, screen, flag, control):
     elif "do nothing" in steps[cursor]:
         x = split(steps[cursor], "do nothing")
         highlightEdge(graph, x, BLACK)
+    elif "found" in steps[cursor]:
+        x = split(steps[cursor], "found")
+        highlightVertex(graph, x)
+        
     
     if control == "prev":
         cursor -= 1
@@ -282,16 +295,6 @@ def stepGraph(graph, screen, flag, control):
         pass
 
 
-
-
-    
-    '''for a in steps:
-        if "union" in a:
-            x = unionList(a)
-            highlightEdge(graph, x)
-    for e in graph.listOfEdges:
-        if e.highlight:
-            print(e.edge," true")'''
 
 def drawGraph(graph, screen, flag):
 
