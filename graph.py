@@ -244,7 +244,7 @@ class Graph:
             rank.append(0)
  
         # Number of edges to be taken is equal to V-1
-        while e < self.size - 1:
+        while i <= self.size:
  
             # Step 2: Pick the smallest edge and increment
             # the index for next iteration
@@ -260,7 +260,6 @@ class Graph:
             # for next edge
             if x != y:
                 line.append([[str(u+1)+" and "+str(v+1)+" are not in the same tree"], ["union ( "+str(u+1)+" , "+str(v+1)+" )"]])
-                e = e + 1
                 self.graphKruskalMST.append([int(u) + 1, int(v) + 1, w])
                 self.union(parent, rank, x, y)
             # Else discard the edge
@@ -287,6 +286,7 @@ class Graph:
 
     def getKruskal(self):
         return self.graphKruskalMST
+
     def getKruskalSteps(self):
         return self.kruskal
     
@@ -311,6 +311,7 @@ class Graph:
         # print for edge and weight
         print("Aresta : Peso\n")
         while (no_edge < self.size - 1):
+            line = []
             # For every vertex in the set S, find the all adjacent vertices
             #, calculate the distance from the vertex selected at step 1.
             # if the vertex is already in the set S, discard it otherwise
@@ -322,12 +323,16 @@ class Graph:
                 if selected[i]:
                     for j in range(self.size):
                         if ((not selected[j]) and G[i][j]):  
+                            if( not self.compare(str(i+1) + " connected to " + str(j+1), self.prim)):
+                                line.append(str(i+1) + " connected to " + str(j+1))
                             # not in selected and there is an edge
                             if minimum > G[i][j]:
                                 minimum = G[i][j]
                                 x = i
                                 y = j
             
+            line.append("selected " + str(x+1) + " and " + str(y+1))
+            self.prim.append(line)
             self.graphPrimMST.append([int(x) + 1, int(y) + 1, int(G[x][y])])
             for i in self.graphPrimMST:
                 v = Vertex(i[0], 1, 0, 0, False)
@@ -340,3 +345,12 @@ class Graph:
             print(str(x+1) + "-" + str(y+1) + ":" + str(G[x][y]))
             selected[y] = True
             no_edge += 1
+
+    def getPrimSteps(self):
+        return self.prim
+
+    def compare(self, string, m):
+        for l in m:
+            if string in l:
+                return True
+        return False

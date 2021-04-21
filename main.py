@@ -88,7 +88,7 @@ def window(view, graph, matrix):
     running = True
     
     while running:
-
+        global cursor
         screen = pygame.display.set_mode(WINDOW_SIZE)
         screen.fill(WHITE)
 
@@ -130,24 +130,32 @@ def window(view, graph, matrix):
                 #print(event.pos)
                 if SQUARE1.collidepoint(event.pos):
                     view = 1
+                     
+                    cursor = -1
                     graph = Graph(matrix, matrix.getSize())
                 elif SQUARE2.collidepoint(event.pos):
                     view = 2    
+                    cursor = -1
                     graph = Graph(matrix, matrix.getSize())
                     graph.kruskalMST()
                 elif SQUARE3.collidepoint(event.pos):
                     view = 3 
+                    cursor = -1
                     graph = Graph(matrix, matrix.getSize())
                     graph.primMST()
                 elif SQUARE4.collidepoint(event.pos):
                     view = 4 
+                    cursor = -1
                 elif SQUARE5.collidepoint(event.pos):
                     view = 5 
+                    cursor = -1
                 elif SQUARE6.collidepoint(event.pos):
                     running = False
-                if view == 2:
+                    cursor = -1
+                if view == 2 or view == 3:
                     if controller.rectNext.collidepoint(event.pos):
                         stepGraph(graph, screen, view, "next")
+                        print(cursor)
                         print("next")
                     elif controller.rectPrev.collidepoint(event.pos):
                         stepGraph(graph, screen, view, "prev")
@@ -161,12 +169,13 @@ def window(view, graph, matrix):
                     elif controller.rectStop.collidepoint(event.pos):
                         stepGraph(graph, screen, view, "stop")
                         print("stop")
+                
 
                 for s in graph.getVertex():
                     if(s != -1):
-                        if s.getHighlight():
+                        if s.getHighlight() and view == 1:
                             s.setHighlight(False)
-                        if s.rect.collidepoint(event.pos):
+                        if s.rect.collidepoint(event.pos) and view == 1:
                             s.setHighlight(True)
                 for e in graph.getEdges():
                     #print(e.getPos())
@@ -179,9 +188,11 @@ def window(view, graph, matrix):
                     if(s != -1):
                         pass
                         #print(s.vertex, s.highlight)
-        drawControl(controller,screen)
+        
         if(view == 1 or view == 2 or view == 3):
             drawGraph(graph, screen, view)
+            if(view != 1):
+                drawControl(controller, screen)
 
         elif(view == 4 or view == 5):#Matriz de adjacencia/incidencia
             drawMatrix(matrix, screen, view-3)
@@ -216,23 +227,53 @@ def drawMatrix(matrix, screen, flag):
                             (MARGIN + HEIGHT) * row + TOP + fontSize/3,
                             ))
 
-def highlightEdge(graph, l, color):
+def highlightEdgeKruskal(graph, l, color):
     for e in graph.listOfEdges:
         if(e.edge[0] == str(l[0]) and e.edge[1] == str(l[1])):
             if(e.getColor() == color and color == GREEN):
                 e.setColor(ORANGE)
+                highlightVertex(graph, l[0])
+                highlightVertex(graph, l[1])
             elif(e.getColor() == color and color == ORANGE):
                 e.setColor(BLACK)
+            elif(e.getColor() == color and color == RED):
+                e.setColor(BLACK)
+                highlightVertex(graph, l[0])
+                highlightVertex(graph, l[1])
             else:
                 e.setColor(color)
-            print("oi",e)
+            if(e.getColor() == GREEN or e.getColor() == RED):
+                highlightVertex(graph, l[0])
+                highlightVertex(graph, l[1])
+
+            #print("Aresta: ", e)
+
+def highlightEdgePrim(graph, l, color): #MELHORAR A FUNÇÃO 
+    for e in graph.listOfEdges:
+        if((e.edge[0] == str(l[0]) and e.edge[1] == str(l[1])) or (e.edge[0] == str(l[1]) and e.edge[1] == str(l[0]))):
+            if(e.getColor() == color and color == GREEN):
+                e.setColor(ORANGE)
+                highlightVertex(graph, l[0])
+                highlightVertex(graph, l[1])
+            elif(e.getColor() == color and color == ORANGE):
+                e.setColor(BLACK)
+            elif(e.getColor() == color and color == RED):
+                e.setColor(BLACK)
+                highlightVertex(graph, l[0])
+                highlightVertex(graph, l[1])
+            else:
+                e.setColor(color)
+            if(e.getColor() == GREEN or e.getColor() == RED):
+                highlightVertex(graph, l[0])
+                highlightVertex(graph, l[1])
+            print(e.getColor())
 
 def highlightVertex(graph, l):
     for v in graph.listOfVertex:
-        if (v.getKey() == str(l[0]) and not v.getHighlight()):
-            print("vetex hilight", l[0])
+        if (v.getKey() == str(l) and not v.getHighlight()):
+            #print("vetex highlight", l)
             v.setHighlight(True)
-        elif (v.getKey() == str(l[0]) and v.getHighlight()):
+        elif (v.getKey() == str(l) and v.getHighlight()):
             v.setHighlight(False)
 
 def split(string, flag):
@@ -249,22 +290,36 @@ def split(string, flag):
     elif flag == "found":
         a = x[1]
         b = x[4]
+    elif flag == "connected":
+        a = x[0]
+        b = x[3]
+    elif flag == "selected":
+        a = x[1]
+        b = x[3]
+
     return [int(a), int(b)]
- 
 
-def prepare(steps):
+def prepare(steps, flag):
     res=[]
-    for a in steps:
-        for b in a:
-            for c in b:
-                res.append(c[0])
+    if(flag == 1):
+        for a in steps:
+            for b in a:
+                for c in b:
+                    res.append(c[0])
+    if(flag == 2):
+        for a in steps:
+            for b in a:
+                res.append(b)
     return res
-
 
 def stepGraph(graph, screen, flag, control):
     global cursor
-    steps = prepare(graph.getKruskalSteps())
+    if(flag == 2):
+        steps = prepare(graph.getKruskalSteps(), flag-1)
+    elif(flag == 3):
+        steps = prepare(graph.getPrimSteps(), flag-1)
     print(steps)
+    
     if control == "play":
         cursor += 1
     elif control == "stop":
@@ -274,26 +329,37 @@ def stepGraph(graph, screen, flag, control):
     elif control == "next":
         cursor += 1
     
-    print("current step: ", steps[cursor])
-    if "union" in steps[cursor]:
-        x = split(steps[cursor], "union")
-        highlightEdge(graph, x, GREEN)
-    elif "are not" in steps[cursor]:
-        x = split(steps[cursor], "are not")
-        highlightEdge(graph, x, ORANGE)
-    elif "do nothing" in steps[cursor]:
-        x = split(steps[cursor], "do nothing")
-        highlightEdge(graph, x, BLACK)
-    elif "found" in steps[cursor]:
-        x = split(steps[cursor], "found")
-        highlightVertex(graph, x)
+    if(cursor < len(steps)):
+        print("current step: ", steps[cursor])
+        if "union" in steps[cursor]:
+            x = split(steps[cursor], "union")
+            highlightEdgeKruskal(graph, x, GREEN)
+        elif "are not" in steps[cursor]:
+            x = split(steps[cursor], "are not")
+            highlightEdgeKruskal(graph, x, ORANGE)
+        elif "do nothing" in steps[cursor]:
+            x = split(steps[cursor], "do nothing")
+            highlightEdgeKruskal(graph, x, RED)
+        elif "found" in steps[cursor]:
+            x = split(steps[cursor], "found")
+            highlightVertex(graph, x[0])
+        
+        elif "connected" in steps[cursor]:
+            x = split(steps[cursor], "connected")
+            print("vertices conectados:" + str(x[0]) + str(x[1]))
+            highlightEdgePrim(graph, x, ORANGE)
+            highlightVertex(graph, x)
+        
+        elif "selected" in steps[cursor]:
+            x = split(steps[cursor], "selected")
+            highlightEdgePrim(graph, x, GREEN)
+
         
     
     if control == "prev":
         cursor -= 1
     else:
-        pass
-
+        pass 
 
 
 def drawGraph(graph, screen, flag):
@@ -302,18 +368,20 @@ def drawGraph(graph, screen, flag):
     fontSize = 30
     font = pygame.font.SysFont('arial', fontSize)
     font2 = pygame.font.SysFont('arial', int(fontSize/2)+5)
-    RED = (255, 0, 0)
     centerX = screen.get_width() /2
     centerY = screen.get_height() / 2
     radius = 200
     vertexList = graph.getVertex()
 
-
-    if (flag == 1):
-        edgeList = graph.getEdges()
-    elif(flag == 2):
-        edgeList = graph.getEdges()
+    if(flag == 2):
+        steps = prepare(graph.getKruskalSteps(), flag-1)
     elif(flag == 3):
+        steps = prepare(graph.getPrimSteps(), flag-1)
+    if (flag == 1 or cursor < len(steps) ):
+        edgeList = graph.getEdges()
+    elif(flag == 2 and cursor >= len(steps) ):
+        edgeList = graph.getEdgesKruskal()
+    elif(flag == 3 and cursor >= len(steps)):
         edgeList = graph.getEdgesPrim()
 
     angle = radians(0)
