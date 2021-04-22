@@ -34,6 +34,7 @@ HEIGHT = 60
 MARGIN = 10
 
 cursor = -1
+play = False
 
 def keyInput(event, object, string, object2 = False):
     for o in object:
@@ -68,6 +69,7 @@ def keyInput(event, object, string, object2 = False):
 
 def window(view, graph, matrix):
 
+    global play
     controller = c.Control(0,0)
 
     pygame.font.init()
@@ -130,7 +132,6 @@ def window(view, graph, matrix):
                 #print(event.pos)
                 if SQUARE1.collidepoint(event.pos):
                     view = 1
-                     
                     cursor = -1
                     graph = Graph(matrix, matrix.getSize())
                 elif SQUARE2.collidepoint(event.pos):
@@ -156,19 +157,24 @@ def window(view, graph, matrix):
                     if controller.rectNext.collidepoint(event.pos):
                         stepGraph(graph, screen, view, "next")
                         print(cursor)
+                        play = False
                         print("next")
                     elif controller.rectPrev.collidepoint(event.pos):
                         stepGraph(graph, screen, view, "prev")
+                        play = False
                         print("prev")
                     elif controller.rectPlay.collidepoint(event.pos):
-                        stepGraph(graph, screen, view, "play")
+                        play = True
                         print("play")
                     elif controller.rectPause.collidepoint(event.pos):
-                        stepGraph(graph, screen, view, "pause")
-                        print("pause")
+                        play = False
+                        print("Pause")
                     elif controller.rectStop.collidepoint(event.pos):
-                        stepGraph(graph, screen, view, "stop")
-                        print("stop")
+                        view = 2    
+                        cursor = -1
+                        graph = Graph(matrix, matrix.getSize())
+                        graph.kruskalMST()
+                        play = False
                 
 
                 for s in graph.getVertex():
@@ -189,10 +195,15 @@ def window(view, graph, matrix):
                         pass
                         #print(s.vertex, s.highlight)
         
+
+            
         if(view == 1 or view == 2 or view == 3):
             drawGraph(graph, screen, view)
             if(view != 1):
                 drawControl(controller, screen)
+                if(play):
+                    stepGraph(graph, screen, view, "play")
+                    t.sleep(1)
 
         elif(view == 4 or view == 5):#Matriz de adjacencia/incidencia
             drawMatrix(matrix, screen, view-3)
@@ -253,19 +264,12 @@ def highlightEdgePrim(graph, l, color): #MELHORAR A FUNÇÃO
         if((e.edge[0] == str(l[0]) and e.edge[1] == str(l[1])) or (e.edge[0] == str(l[1]) and e.edge[1] == str(l[0]))):
             if(e.getColor() == color and color == GREEN):
                 e.setColor(ORANGE)
-                highlightVertex(graph, l[0])
-                highlightVertex(graph, l[1])
             elif(e.getColor() == color and color == ORANGE):
                 e.setColor(BLACK)
             elif(e.getColor() == color and color == RED):
                 e.setColor(BLACK)
-                highlightVertex(graph, l[0])
-                highlightVertex(graph, l[1])
             else:
                 e.setColor(color)
-            if(e.getColor() == GREEN or e.getColor() == RED):
-                highlightVertex(graph, l[0])
-                highlightVertex(graph, l[1])
             print(e.getColor())
 
 def highlightVertex(graph, l):
@@ -296,7 +300,9 @@ def split(string, flag):
     elif flag == "selected":
         a = x[1]
         b = x[3]
-
+    elif flag == "visited":
+        a = x[1]
+        b = 0
     return [int(a), int(b)]
 
 def prepare(steps, flag):
@@ -322,10 +328,7 @@ def stepGraph(graph, screen, flag, control):
     
     if control == "play":
         cursor += 1
-    elif control == "stop":
-        cursor = 0
-    elif control == "pause":
-        pass
+    
     elif control == "next":
         cursor += 1
     
@@ -346,18 +349,23 @@ def stepGraph(graph, screen, flag, control):
         
         elif "connected" in steps[cursor]:
             x = split(steps[cursor], "connected")
-            print("vertices conectados:" + str(x[0]) + str(x[1]))
+            print("vertices conectados:" + str(x[0]) + " " + str(x[1]))
             highlightEdgePrim(graph, x, ORANGE)
             highlightVertex(graph, x)
         
         elif "selected" in steps[cursor]:
             x = split(steps[cursor], "selected")
             highlightEdgePrim(graph, x, GREEN)
+        
+        elif "visited" in steps[cursor]:
+            x = split(steps[cursor], "visited")
+            highlightVertex(graph, x)
 
     if control == "prev":
         cursor -= 1
-    else:
-        pass 
+    elif control == "stop":
+        cursor = -1
+
 
 
 def drawGraph(graph, screen, flag):
@@ -449,7 +457,7 @@ def drawGraph(graph, screen, flag):
     
     if (flag == 2):
         fontKruskal = pygame.font.SysFont('arial', fontSize//2)
-        ordered = graph.getEdges()
+        #ordered = graph.getEdges()
         ordered = sorted(graph.getEdges(), key=lambda item: item.getWeight())
         columns = fontKruskal.render("V1 | V2 | Peso", True, BLACK)
         screen.blit(columns, (centerX*2, centerY - 250))
@@ -458,11 +466,6 @@ def drawGraph(graph, screen, flag):
             v1 = fontKruskal.render(" " + str(o.getEdge()[0]) + "  |  " + str(o.getEdge()[1]) + "   |  " + str(o.getWeight()), True, o.getColor())
             screen.blit(v1, (centerX*2, centerY - 250 + i))
             i += 15
-            #v2 = fontKruskal.render(str(o[1]), True, BLACK)
-            #screen.blit(v2, (line.centerx + textX, line.centery + textY))
-
-            #w = fontKruskal.render(str(o[2]), True, BLACK)
-            #screen.blit(w, (line.centerx + textX, line.centery + textY))
 
             
 def showGraph(inputGraph):

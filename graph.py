@@ -319,6 +319,8 @@ class Graph:
             y = 0
             for i in range(self.size):
                 if selected[i]:
+                    if(not self.compare("visited " + str(i+1), self.prim)):
+                        line.append("visited " + str(i+1))
                     for j in range(self.size):
                         if ((not selected[j]) and G[i][j]):  
                             if( not self.compare(str(i+1) + " connected to " + str(j+1), self.prim)):
