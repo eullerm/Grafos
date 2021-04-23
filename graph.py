@@ -108,6 +108,7 @@ class Graph:
         self.listOfVertex = [-1] * size #O -1 é para poder desenhar vetores com vertices faltando
         self.size = 0
         self.data = data
+        self.totalCost = -1
 
         self.graphKruskalMST = list()
         self.listOfEdgesKruskal = []
@@ -150,6 +151,9 @@ class Graph:
 
     def getSize(self):
         return self.size
+    
+    def getTotalCost(self):
+        return self.totalCost
 
     def printGraph(self):
         print("Vertices")
@@ -242,7 +246,7 @@ class Graph:
             rank.append(0)
  
         # Number of edges to be taken is equal to V-1
-        while i <= self.size:
+        while i < len(ordered):
  
             # Step 2: Pick the smallest edge and increment
             # the index for next iteration
@@ -271,6 +275,7 @@ class Graph:
             print("%d -- %d == %d" % (u, v, weight))
         print("Arvore minima com custo " , minimumCost)
         #print("#########################")
+        self.totalCost = minimumCost
 
         for i in self.graphKruskalMST:
             v = Vertex(i[0], 1, 0, 0, False)
@@ -345,6 +350,14 @@ class Graph:
             print(str(x+1) + "-" + str(y+1) + ":" + str(G[x][y]))
             selected[y] = True
             no_edge += 1
+            minimumCost = 0
+            print ("Arestas da arvore minima")
+            for u, v, weight in self.graphPrimMST:
+                minimumCost += weight
+                print("%d -- %d == %d" % (u, v, weight))
+            print("Arvore minima com custo " , minimumCost)
+            #print("#########################")
+            self.totalCost = minimumCost
 
     def getPrimSteps(self):
         return self.prim

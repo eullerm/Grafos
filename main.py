@@ -359,14 +359,12 @@ def stepGraph(graph, screen, flag, control):
         
         elif "visited" in steps[cursor]:
             x = split(steps[cursor], "visited")
-            highlightVertex(graph, x)
+            highlightVertex(graph, x[0])
 
     if control == "prev":
         cursor -= 1
     elif control == "stop":
         cursor = -1
-
-
 
 def drawGraph(graph, screen, flag):
 
@@ -389,6 +387,10 @@ def drawGraph(graph, screen, flag):
         edgeList = graph.getEdgesKruskal()
     elif(flag == 3 and cursor >= len(steps)):
         edgeList = graph.getEdgesPrim()
+        for s in graph.getVertex():
+            if(s != -1):
+                if s.getHighlight():
+                    s.setHighlight(False)
 
     angle = radians(0)
     rotate = radians(360 / graph.getSize())
@@ -454,18 +456,23 @@ def drawGraph(graph, screen, flag):
 
             screen.blit(text, (s.getPos()[0] + 15, s.getPos()[1] + 8))
             screen.blit(textWeight, (s.rect.x+18, s.rect.y-15))
-    
+    i = 15
     if (flag == 2):
         fontKruskal = pygame.font.SysFont('arial', fontSize//2)
         #ordered = graph.getEdges()
         ordered = sorted(graph.getEdges(), key=lambda item: item.getWeight())
         columns = fontKruskal.render("V1 | V2 | Peso", True, BLACK)
         screen.blit(columns, (centerX*2, centerY - 250))
-        i = 15
+        
         for o in ordered:
             v1 = fontKruskal.render(" " + str(o.getEdge()[0]) + "  |  " + str(o.getEdge()[1]) + "   |  " + str(o.getWeight()), True, o.getColor())
             screen.blit(v1, (centerX*2, centerY - 250 + i))
             i += 15
+    
+    if ((flag == 2 or flag == 3) and cursor >= len(steps)):
+        fontMST = fontKruskal = pygame.font.SysFont('arial', fontSize//2)
+        weight = fontMST.render("Custo: " + str(graph.getTotalCost()), True, BLACK)
+        screen.blit(weight, (centerX*2, centerY - 250 + i))
 
             
 def showGraph(inputGraph):
