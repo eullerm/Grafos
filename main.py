@@ -333,7 +333,7 @@ def stepGraph(graph, screen, flag, control):
     elif control == "next":
         cursor += 1
     
-    if(cursor < len(steps)):
+    if(cursor < len(steps) and cursor >= 0):
         print("current step: ", steps[cursor])
         if "union" in steps[cursor]:
             x = split(steps[cursor], "union")
@@ -364,7 +364,7 @@ def stepGraph(graph, screen, flag, control):
     else:
         play = False
 
-    if control == "prev":
+    if control == "prev" and cursor > 0:
         cursor -= 1
     elif control == "stop":
         cursor = -1
