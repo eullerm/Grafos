@@ -191,80 +191,58 @@ class Graph:
 
         return False
 
-    # A utility function to find set of an element i
-    # (uses path compression technique)
     def find(self, parent, i):
         if parent[i] == i:
             return i
         return self.find(parent, parent[i])
  
-    # A function that does union of two sets of x and y
-    # (uses union by rank)
     def union(self, parent, rank, x, y):
         xroot = self.find(parent, x)
         yroot = self.find(parent, y)
  
-        # Attach smaller rank tree under root of
-        # high rank tree (Union by Rank)
         if rank[xroot] < rank[yroot]:
             parent[xroot] = yroot
         elif rank[xroot] > rank[yroot]:
             parent[yroot] = xroot
- 
-        # If ranks are same, then make one as root
-        # and increment its rank by one
+
         else:
             parent[yroot] = xroot
             rank[xroot] += 1
  
-    # The main function to construct MST using Kruskal's
-        # algorithm
+
     def kruskalMST(self):
           
-        # An index variable, used for sorted edges
         i = 0
          
-        # An index variable, used for result[]
         e = 0
  
-        # Step 1:  Sort all the edges in
-        # non-decreasing order of their
-        # weight.  If we are not allowed to change the
         graph = list()
         for edge in self.listOfEdges:
             graph.append([int(edge.edge[0])-1, int(edge.edge[1])-1, int(edge.weight)])#Pega os vertices e os pesos [v1, v2, p]
-        # given graph, we can create a copy of graph
         ordered = sorted(graph,
                             key=lambda item: item[2])
  
         parent = []
         rank = []
  
-        # Create V subsets with single elements
         for node in range(self.size):
             parent.append(node)
             rank.append(0)
  
-        # Number of edges to be taken is equal to V-1
         while i < len(ordered):
  
-            # Step 2: Pick the smallest edge and increment
-            # the index for next iteration
+
             line=[]
             u, v, w = ordered[i]
             i = i + 1
             x = self.find(parent, u)
             y = self.find(parent, v)
             line.append([["found " + str(u+1) + " on position " + str(x+1)], ["found " + str(v+1) + " on position " + str(y+1)+" "]])
-            # If including this edge does't
-            #  cause cycle, include it in result
-            #  and increment the indexof result
-            # for next edge
+
             if x != y:
                 line.append([[str(u+1)+" and "+str(v+1)+" are not in the same tree"], ["union ( "+str(u+1)+" , "+str(v+1)+" )"]])
                 self.graphKruskalMST.append([int(u) + 1, int(v) + 1, w])
                 self.union(parent, rank, x, y)
-            # Else discard the edge
             else:
                 line.append([[str(u+1)+" and "+str(v+1)+" are in the same tree, do nothing."]])
             self.kruskal.append(line)
@@ -274,7 +252,7 @@ class Graph:
             minimumCost += weight
             print("%d -- %d == %d" % (u, v, weight))
         print("Arvore minima com custo " , minimumCost)
-        #print("#########################")
+        print("#########################")
         self.totalCost = minimumCost
 
         for i in self.graphKruskalMST:
@@ -296,29 +274,17 @@ class Graph:
     def primMST(self):
 
         INF = 9999999
-        # number of vertices in graph
         V = 5
-        # create a 2d array of size 5x5
-        # for adjacency matrix to represent graph
+
         G = self.data.getAdjacencyMatrix()
-        # create a array to track selected vertex
-        # selected will become true otherwise false
+
         selected = [0] * self.size
-        # set number of edge to 0
         no_edge = 0
-        # the number of egde in minimum spanning tree will be
-        # always less than(V - 1), where V is number of vertices in
-        # graph
-        # choose 0th vertex and make it true
+    
         selected[0] = True
-        # print for edge and weight
         print("Aresta : Peso\n")
         while (no_edge < self.size - 1):
             line = []
-            # For every vertex in the set S, find the all adjacent vertices
-            #, calculate the distance from the vertex selected at step 1.
-            # if the vertex is already in the set S, discard it otherwise
-            # choose another vertex nearest to selected vertex  at step 1.
             minimum = INF
             x = 0
             y = 0
@@ -330,7 +296,6 @@ class Graph:
                         if ((not selected[j]) and G[i][j]):  
                             if( not self.compare(str(i+1) + " connected to " + str(j+1), self.prim)):
                                 line.append(str(i+1) + " connected to " + str(j+1))
-                            # not in selected and there is an edge
                             if minimum > G[i][j]:
                                 minimum = G[i][j]
                                 x = i
@@ -356,7 +321,7 @@ class Graph:
                 minimumCost += weight
                 print("%d -- %d == %d" % (u, v, weight))
             print("Arvore minima com custo " , minimumCost)
-            #print("#########################")
+            print("#########################")
             self.totalCost = minimumCost
 
     def getPrimSteps(self):

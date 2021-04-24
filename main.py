@@ -320,6 +320,7 @@ def prepare(steps, flag):
 
 def stepGraph(graph, screen, flag, control):
     global cursor
+    global play
     if(flag == 2):
         steps = prepare(graph.getKruskalSteps(), flag-1)
     elif(flag == 3):
@@ -360,6 +361,8 @@ def stepGraph(graph, screen, flag, control):
         elif "visited" in steps[cursor]:
             x = split(steps[cursor], "visited")
             highlightVertex(graph, x[0])
+    else:
+        play = False
 
     if control == "prev":
         cursor -= 1
